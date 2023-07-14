@@ -1,4 +1,4 @@
-package nvd
+package cwe
 
 import (
   "fmt"
@@ -8,11 +8,11 @@ import (
 // CWE identifier.
 //
 // CWE identifiers are stored internally as an unsigned, 32-bit integer.
-type CweId uint32
+type Id uint32
 
 // Create new CWE identifier from string.  Returns error if the given
 // string could not be parsed as a CWE identifier.
-func NewCweId(s string) (*CweId, error) {
+func ParseId(s string) (*Id, error) {
   // check string length
   if len(s) < 5 {
     return nil, fmt.Errorf("invalid CWE ID \"%s\": string too short", s)
@@ -39,7 +39,7 @@ func NewCweId(s string) (*CweId, error) {
   }
 
   // encode result as u32
-  r := CweId(uint32(num))
+  r := Id(uint32(num))
 
   // return result
   return &r, nil
@@ -47,8 +47,8 @@ func NewCweId(s string) (*CweId, error) {
 
 // Parse given string as CVE ID.  Panics if the given string could not
 // be parsed as a CVE ID.
-func MustParseCweId(s string) *CweId {
-  if id, err := NewCweId(s); err == nil {
+func MustParseId(s string) *Id {
+  if id, err := ParseId(s); err == nil {
     return id
   } else {
     panic(err)
@@ -56,7 +56,7 @@ func MustParseCweId(s string) *CweId {
 }
 
 // Return CWE ID as string.  Returns "" if the given CWE ID is nil.
-func (id *CweId) String() string {
+func (id *Id) String() string {
   if id != nil {
     return fmt.Sprintf("CWE-%d", id.Uint())
   } else {
@@ -66,7 +66,7 @@ func (id *CweId) String() string {
 
 // Get number component of CWE ID as unsigned 32-bit integer.  Returns 0
 // if the given CWE ID is nil.
-func (id *CweId) Uint() uint32 {
+func (id *Id) Uint() uint32 {
   if id != nil {
     return uint32(*id)
   } else {

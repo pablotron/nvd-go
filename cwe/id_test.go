@@ -1,8 +1,8 @@
-package nvd
+package cwe
 
 import "testing"
 
-func TestNewCweId(t *testing.T) {
+func TestParseId(t *testing.T) {
   passTests := []struct {
     val string // test value
     exp uint32 // expected numeric value
@@ -24,7 +24,7 @@ func TestNewCweId(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.val, func(t *testing.T) {
       // parse string
-      id, err := NewCweId(test.val)
+      id, err := ParseId(test.val)
       if err != nil {
         t.Fatal(err)
       }
@@ -62,7 +62,7 @@ func TestNewCweId(t *testing.T) {
   for _, test := range(failTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse string, check for error
-      if id, err := NewCweId(test.val); err == nil {
+      if id, err := ParseId(test.val); err == nil {
         t.Fatalf("got %v, exp err", id)
       }
     })
