@@ -67,6 +67,9 @@ func (cp *CveParams) QueryString() (string, error) {
     switch fieldVal.Type().Kind() {
     case reflect.Bool:
       if val := fieldVal.Bool(); val {
+        // FIXME: this should be appending boolean parameters without
+        // the trailing "=", but Encode() still appends them for
+        // multi-parameter strings
         urlVals.Add(tag, "")
       }
     case reflect.Uint:
