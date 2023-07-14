@@ -39,9 +39,9 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV2Severity",
     val: CveParams {
-      CvssV2Severity: "foo",
+      CvssV2Severity: MustParseCvssSeverity("LOW"),
     },
-    exp: "cvssV2Severity=foo",
+    exp: "cvssV2Severity=LOW",
   }, {
     name: "cvssV3Metrics",
     val: CveParams {
@@ -51,15 +51,15 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV3Severity",
     val: CveParams {
-      CvssV3Severity: "foo",
+      CvssV3Severity: MustParseCvssSeverity("HIGH"),
     },
-    exp: "cvssV3Severity=foo",
+    exp: "cvssV3Severity=HIGH",
   }, {
     name: "cweId",
     val: CveParams {
-      CweId: "foo",
+      CweId: MustParseCweId("CWE-1"),
     },
-    exp: "cweId=foo",
+    exp: "cweId=CWE-1",
   }, {
     name: "hasCertAlerts",
     val: CveParams {
@@ -136,9 +136,9 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "resultsPerPage",
     val: CveParams {
-      ResultsPerPage: 31415,
+      ResultsPerPage: 1999,
     },
-    exp: "resultsPerPage=31415",
+    exp: "resultsPerPage=1999",
   }, {
     name: "startIndex",
     val: CveParams {

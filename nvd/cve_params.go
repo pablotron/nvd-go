@@ -11,10 +11,10 @@ type CveParams struct {
   CpeName *CpeName `url:"cpeName"`
   CveId *CveId `url:"cveId"`
   CvssV2Metrics string `url:"cvssV2Metrics"`
-  CvssV2Severity string `url:"cvssV2Severity"`
+  CvssV2Severity *CvssSeverity `url:"cvssV2Severity"`
   CvssV3Metrics string `url:"cvssV3Metrics"`
-  CvssV3Severity string `url:"cvssV3Severity"`
-  CweId string `url:"cweId"`
+  CvssV3Severity *CvssSeverity `url:"cvssV3Severity"`
+  CweId *CweId `url:"cweId"`
   HasCertAlerts bool `url:"hasCertAlerts"`
   HasCertNotes bool `url:"hasCertNotes"`
   HasKev bool `url:"hasKev"`
