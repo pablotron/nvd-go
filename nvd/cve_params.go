@@ -6,6 +6,7 @@ import (
   net_url "net/url"
   "pmdn.org/nvd-api/cpe"
   "pmdn.org/nvd-api/cve"
+  "pmdn.org/nvd-api/cvss"
   "reflect"
 )
 
@@ -14,9 +15,9 @@ type CveParams struct {
   CpeName *cpe.Name `url:"cpeName"`
   CveId *cve.Id `url:"cveId"`
   CvssV2Metrics string `url:"cvssV2Metrics"`
-  CvssV2Severity *CvssSeverity `url:"cvssV2Severity"`
+  CvssV2Severity *cvss.Severity `url:"cvssV2Severity"`
   CvssV3Metrics string `url:"cvssV3Metrics"`
-  CvssV3Severity *CvssSeverity `url:"cvssV3Severity"`
+  CvssV3Severity *cvss.Severity `url:"cvssV3Severity"`
   CweId *CweId `url:"cweId"`
   HasCertAlerts bool `url:"hasCertAlerts"`
   HasCertNotes bool `url:"hasCertNotes"`
@@ -136,12 +137,12 @@ func (cp CveParams) Check() error {
   }
 
   // check for invalid cvss v2 severity
-  if cp.CvssV2Severity != nil && !cp.CvssV2Severity.isValidV2Severity() {
+  if cp.CvssV2Severity != nil && !cvss.V2.ValidSeverity(*cp.CvssV2Severity) {
     return errCveParamsInvalidV2Severity
   }
 
   // check for invalid cvss v3 severity
-  if cp.CvssV3Severity != nil && !cp.CvssV3Severity.isValidV3Severity() {
+  if cp.CvssV3Severity != nil && !cvss.V30.ValidSeverity(*cp.CvssV3Severity) {
     return errCveParamsInvalidV3Severity
   }
 

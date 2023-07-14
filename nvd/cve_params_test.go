@@ -3,6 +3,7 @@ package nvd
 import (
   "pmdn.org/nvd-api/cpe"
   "pmdn.org/nvd-api/cve"
+  "pmdn.org/nvd-api/cvss"
   "testing"
 )
 
@@ -43,7 +44,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV2Severity",
     val: CveParams {
-      CvssV2Severity: MustParseCvssSeverity("LOW"),
+      CvssV2Severity: cvss.MustParseSeverity("LOW"),
     },
     exp: "cvssV2Severity=LOW",
   }, {
@@ -55,7 +56,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV3Severity",
     val: CveParams {
-      CvssV3Severity: MustParseCvssSeverity("HIGH"),
+      CvssV3Severity: cvss.MustParseSeverity("HIGH"),
     },
     exp: "cvssV3Severity=HIGH",
   }, {
