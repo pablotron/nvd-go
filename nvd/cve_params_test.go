@@ -1,8 +1,6 @@
 package nvd
 
-import (
-  "testing"
-)
+import "testing"
 
 func TestCveParamsQueryString(t *testing.T) {
   passTests := []struct {
