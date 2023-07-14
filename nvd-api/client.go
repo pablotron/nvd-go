@@ -20,10 +20,12 @@ var DefaultApiUrl = net_url.URL {
   Path: "/rest/json/cves/2.0",
 }
 
+// Create new REST API client from given API key and server URL.
 func NewClientWithUrl(apiKey string, apiUrl *net_url.URL) Client {
   return Client { apiKey: apiKey, apiUrl: apiUrl }
 }
 
+// Create new REST API client from given API key.
 func NewClient(apiKey string) Client {
   return NewClientWithUrl(apiKey, &DefaultApiUrl)
 }
