@@ -4,9 +4,9 @@ import (
   "errors"
   "fmt"
   net_url "net/url"
-  "pmdn.org/nvd-api/cpe"
-  "pmdn.org/nvd-api/cve"
-  "pmdn.org/nvd-api/cvss"
+  "pmdn.org/nvd-go/cpe"
+  "pmdn.org/nvd-go/cve"
+  "pmdn.org/nvd-go/cvss"
   "reflect"
 )
 
