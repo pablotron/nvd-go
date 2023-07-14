@@ -5,7 +5,6 @@ import (
   "fmt"
   net_url "net/url"
   "reflect"
-  "time"
 )
 
 // Search parameters for `Cves()` method.
@@ -35,8 +34,8 @@ type CveParams struct {
   VersionStart string `url:"versionStart"`
   VersionStartType VersionType `url:"versionStartType"`
   VersionEnd string `url:"versionEnd"`
-  VersionEndType  VersionType `url:"versionEndType"`
-  VirtualMatchString string `url:"virtualMatchString"`
+  VersionEndType VersionType `url:"versionEndType"`
+  VirtualMatchString *CpeMatchString `url:"virtualMatchString"`
 }
 
 // Error returned by Check() if both CVSS V2 metrics and CVSS V3 metrics
@@ -69,19 +68,19 @@ var errCveParamsKeywordExactMatch = errors.New("keywordExactMatch without keywor
 
 // Error returned by Check() if versionEnd is set without
 // versionEndType.
-value errCveParamsMissingVersionEndType = errors.New("versionEnd without versionEndType")
+var errCveParamsMissingVersionEndType = errors.New("versionEnd without versionEndType")
 
 // Error returned by Check() if versionEndType is set without
 // versionEnd.
-value errCveParamsMissingVersionEnd = errors.New("versionEndType without versionEnd")
+var errCveParamsMissingVersionEnd = errors.New("versionEndType without versionEnd")
 
 // Error returned by Check() if versionStart is set without
 // versionStartType.
-value errCveParamsMissingVersionStartType = errors.New("versionStart without versionStartType")
+var errCveParamsMissingVersionStartType = errors.New("versionStart without versionStartType")
 
 // Error returned by Check() if versionStartType is set without
 // versionStart.
-value errCveParamsMissingVersionStart = errors.New("versionStartType without versionStart")
+var errCveParamsMissingVersionStart = errors.New("versionStartType without versionStart")
 
 // maximum value for ResultsPerPage parameter.
 const maxResultsPerPage = 2000
@@ -90,7 +89,7 @@ const maxResultsPerPage = 2000
 const maxDateRangeDays = 120.0
 
 func checkDateRange(name string, start, end *Time) error {
-  if if start == nil && end == nil {
+  if start == nil && end == nil {
     return nil
   } else if start != nil && end == nil {
     return fmt.Errorf("missing %sEndDate", name)
@@ -111,9 +110,9 @@ func checkDateRange(name string, start, end *Time) error {
   }
 
   // get duration between start and end (in days)
-  days := endTime.Sub(startTime) * 24.0
+  days := endTime.Sub(*startTime).Hours() * 24.0
 
-  // check that date range duration is in range
+  // check for valid date range duration
   if days < 0.0 || days > maxDateRangeDays {
     return fmt.Errorf("%s date range duration out of range: %f", name, days)
   }
@@ -155,7 +154,7 @@ func (cp CveParams) Check() error {
   }
 
   // check for both isVulnerable and virtualMatchString
-  if cp.IsVulnerable && cp.VirtualMatchString != "" {
+  if cp.IsVulnerable && cp.VirtualMatchString != nil {
     return errCveParamsIsVulnerableWithVirtualMatchString
   }
 
@@ -175,16 +174,16 @@ func (cp CveParams) Check() error {
   }
 
   // check for versionEnd without versionEndType
-  if cp.versionEnd != "" && cp.versionEndType == nil {
+  if cp.VersionEnd != "" && cp.VersionEndType == DefaultVersionType {
     return errCveParamsMissingVersionEndType
-  } else if cp.versionEnd == "" && cp.versionEndType != nil {
+  } else if cp.VersionEnd == "" && cp.VersionEndType != DefaultVersionType {
     return errCveParamsMissingVersionEnd
   }
 
   // check for versionStart without versionStartType
-  if cp.versionStart != "" && cp.versionStartType == nil {
+  if cp.VersionStart != "" && cp.VersionStartType == DefaultVersionType {
     return errCveParamsMissingVersionStartType
-  } else if cp.versionStart == "" && cp.versionStartType != nil {
+  } else if cp.VersionStart == "" && cp.VersionStartType != DefaultVersionType {
     return errCveParamsMissingVersionStart
   }
 
