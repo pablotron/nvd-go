@@ -46,6 +46,12 @@ func MustParseCpeMatchString(s string) *CpeMatchString {
   }
 }
 
+// Does this CPE match string match a range of versions?
+func (m CpeMatchString) matchesVersionRange() bool {
+  cs := []string(m)
+  return len(cs) < 4 || cs[3] == "*"
+}
+
 // return CpeMatchString as string
 func (ms CpeMatchString) String() string {
   return "cpe:2.3:" + strings.Join([]string(ms), ":")
