@@ -7,6 +7,11 @@ import (
 )
 
 // CVE identifier.
+//
+// CVE identifiers are stored internally as an unsigned, 32-bit integer
+// by limiting the range of the year component of the CVE ID to the
+// range [1900, 2155] (inclusive) and the range of the number component
+// of the CVE ID to the range [0, 2**24] (inclusive).
 type CveId uint32
 
 // Name, minimum and maximum numeric value for each CVE ID component.
