@@ -1,11 +1,11 @@
-package nvd
+package cpe
 
 import (
   "reflect"
   "testing"
 )
 
-func TestParseCpeMatchString(t *testing.T) {
+func TestParseMatch(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -19,7 +19,7 @@ func TestParseCpeMatchString(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse match string
-      ms, err := ParseCpeMatchString(test.val)
+      ms, err := ParseMatch(test.val)
       if err != nil {
         t.Fatal(err)
       }
@@ -33,7 +33,7 @@ func TestParseCpeMatchString(t *testing.T) {
   }
 }
 
-func TestCpeMatchStringString(t *testing.T) {
+func TestMatchString(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -47,7 +47,7 @@ func TestCpeMatchStringString(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse match string
-      ms, err := ParseCpeMatchString(test.val)
+      ms, err := ParseMatch(test.val)
       if err != nil {
         t.Fatal(err)
       }

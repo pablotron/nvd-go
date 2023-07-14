@@ -1,4 +1,4 @@
-package nvd
+package cpe
 
 import (
   "fmt"
@@ -6,19 +6,19 @@ import (
 )
 
 // CPE name used as parameter in `CvesParams` structure.
-type CpeName []string
+type Name []string
 
-// Expected prefix components of CPE name.
-var expectedCpeNamePrefix = []string { "cpe", "2.3" }
+// Expected CPE name prefix components.
+var expNamePrefix = []string { "cpe", "2.3" }
 
 // Number of leading components of CPE name which must be must not be
 // "*".
-const numRequiredCpeNameComponents = 6
+const numRequiredNameComponents = 6
 
 // create a new CPE name from the given string.
 // Returns an error if the given string could not be converted to a CPE
 // name.
-func NewCpeName(s string) (*CpeName, error) {
+func ParseName(s string) (*Name, error) {
   // split into components
   cs := strings.Split(s, ":")
 
@@ -27,36 +27,36 @@ func NewCpeName(s string) (*CpeName, error) {
     return nil, fmt.Errorf("invalid component count: %d != 13", len(cs))
   }
   // check for expected CPE name prefix components
-  for i, exp := range(expectedCpeNamePrefix) {
+  for i, exp := range(expNamePrefix) {
     if cs[i] != exp {
       return nil, fmt.Errorf("invalid CPE name component %d: %s != %s", i, cs[i], exp)
     }
   }
 
   // check for required CPE name components
-  for i := 0; i < numRequiredCpeNameComponents; i++ {
+  for i := 0; i < numRequiredNameComponents; i++ {
     if cs[i] == "*" {
       return nil, fmt.Errorf("CPE name component %d cannot be wildcard", i)
     }
   }
 
   // build result
-  r := CpeName(cs[2:])
+  r := Name(cs[2:])
 
   // return result
   return &r, nil
 }
 
-// Parse string as CpeName or panic on error.
-func MustParseCpeName(s string) *CpeName {
-  if n, err := NewCpeName(s); err == nil {
+// Parse string as CPE name or panic on error.
+func MustParseName(s string) *Name {
+  if n, err := ParseName(s); err == nil {
     return n
   } else {
     panic(err)
   }
 }
 
-// return CpeName as string
-func (n CpeName) String() string {
+// return Name as string
+func (n Name) String() string {
   return "cpe:2.3:" + strings.Join([]string(n), ":")
 }

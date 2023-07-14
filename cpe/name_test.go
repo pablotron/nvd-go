@@ -1,11 +1,11 @@
-package nvd
+package cpe
 
 import (
   "reflect"
   "testing"
 )
 
-func TestNewCpeName(t *testing.T) {
+func TestParseName(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -19,13 +19,13 @@ func TestNewCpeName(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse name
-      cpeName, err := NewCpeName(test.val)
+      name, err := ParseName(test.val)
       if err != nil {
         t.Fatal(err)
       }
 
       // cast to slice and compare against expected value
-      got := []string(*cpeName)
+      got := []string(*name)
       if !reflect.DeepEqual(got, test.exp) {
         t.Fatalf("got %v, exp %v", got, test.exp)
       }
@@ -33,7 +33,7 @@ func TestNewCpeName(t *testing.T) {
   }
 }
 
-func TestCpeNameString(t *testing.T) {
+func TestNameString(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -47,13 +47,13 @@ func TestCpeNameString(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse name
-      cpeName, err := NewCpeName(test.val)
+      name, err := ParseName(test.val)
       if err != nil {
         t.Fatal(err)
       }
 
       // compare string
-      got := cpeName.String()
+      got := name.String()
       if got != test.exp {
         t.Fatalf("got %s, exp %s", got, test.exp)
       }
