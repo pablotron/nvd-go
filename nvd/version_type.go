@@ -14,6 +14,8 @@ const (
 // not a valid VersionType.
 func (t VersionType) String() string {
   switch t {
+  case DefaultVersionType:
+    return ""
   case Including:
     return "including"
   case Excluding:
