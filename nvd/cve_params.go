@@ -4,12 +4,13 @@ import (
   "errors"
   "fmt"
   net_url "net/url"
+  "pmdn.org/nvd-api/cpe"
   "reflect"
 )
 
 // Search parameters for `Cves()` method.
 type CveParams struct {
-  CpeName *CpeName `url:"cpeName"`
+  CpeName *cpe.Name `url:"cpeName"`
   CveId *CveId `url:"cveId"`
   CvssV2Metrics string `url:"cvssV2Metrics"`
   CvssV2Severity *CvssSeverity `url:"cvssV2Severity"`
@@ -35,7 +36,7 @@ type CveParams struct {
   VersionStartType VersionType `url:"versionStartType"`
   VersionEnd string `url:"versionEnd"`
   VersionEndType VersionType `url:"versionEndType"`
-  VirtualMatchString *CpeMatchString `url:"virtualMatchString"`
+  VirtualMatchString *cpe.Match `url:"virtualMatchString"`
 }
 
 // Error returned by Check() if both CVSS V2 metrics and CVSS V3 metrics

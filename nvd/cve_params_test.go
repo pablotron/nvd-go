@@ -1,6 +1,9 @@
 package nvd
 
-import "testing"
+import (
+  "pmdn.org/nvd-api/cpe"
+  "testing"
+)
 
 func TestCveParamsQueryString(t *testing.T) {
   passTests := []struct {
@@ -14,7 +17,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cpeName",
     val: CveParams {
-      CpeName: MustParseCpeName("cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*"),
+      CpeName: cpe.MustParseName("cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*"),
     },
     exp: "cpeName=cpe%3A2.3%3Ao%3Amicrosoft%3Awindows%3A10%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A",
   }, {
@@ -94,7 +97,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "isVulnerable and cpeName",
     val: CveParams {
-      CpeName: MustParseCpeName("cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*"),
+      CpeName: cpe.MustParseName("cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*"),
       IsVulnerable: true,
     },
     exp: "cpeName=cpe%3A2.3%3Ao%3Amicrosoft%3Awindows%3A10%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A&isVulnerable=",
@@ -159,7 +162,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "virtualMatchString",
     val: CveParams {
-      VirtualMatchString: MustParseCpeMatchString("cpe:2.3:foo"),
+      VirtualMatchString: cpe.MustParseMatch("cpe:2.3:foo"),
     },
     exp: "virtualMatchString=cpe%3A2.3%3Afoo",
   }}
