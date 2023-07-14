@@ -1,4 +1,4 @@
-package nvd
+package nvd_api
 
 // Value which indicates whether a version match range is inclusive or
 // exclusive.  Used as parameter in `CvesParams` structure.

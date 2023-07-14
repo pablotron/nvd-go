@@ -1,4 +1,4 @@
-package nvd
+package nvd_api
 
 import (
   "errors"
