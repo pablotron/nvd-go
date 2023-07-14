@@ -4,6 +4,7 @@ import (
   "pmdn.org/nvd-go/cpe"
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/cvss"
+  "pmdn.org/nvd-go/cwe"
   "testing"
 )
 
@@ -62,7 +63,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cweId",
     val: CveParams {
-      CweId: MustParseCweId("CWE-1"),
+      CweId: cwe.MustParseId("CWE-1"),
     },
     exp: "cweId=CWE-1",
   }, {

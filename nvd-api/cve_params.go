@@ -7,6 +7,7 @@ import (
   "pmdn.org/nvd-go/cpe"
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/cvss"
+  "pmdn.org/nvd-go/cwe"
   "reflect"
 )
 
@@ -18,7 +19,7 @@ type CveParams struct {
   CvssV2Severity *cvss.Severity `url:"cvssV2Severity"`
   CvssV3Metrics string `url:"cvssV3Metrics"`
   CvssV3Severity *cvss.Severity `url:"cvssV3Severity"`
-  CweId *CweId `url:"cweId"`
+  CweId *cwe.Id `url:"cweId"`
   HasCertAlerts bool `url:"hasCertAlerts"`
   HasCertNotes bool `url:"hasCertNotes"`
   HasKev bool `url:"hasKev"`
