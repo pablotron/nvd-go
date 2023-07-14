@@ -92,11 +92,12 @@ func TestCveParamsQueryString(t *testing.T) {
     },
     exp: "hasOval=",
   }, {
-    name: "isVulnerable",
+    name: "isVulnerable and cpeName",
     val: CveParams {
+      CpeName: MustParseCpeName("cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*"),
       IsVulnerable: true,
     },
-    exp: "isVulnerable=",
+    exp: "cpeName=cpe%3A2.3%3Ao%3Amicrosoft%3Awindows%3A10%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A&isVulnerable=",
   }, {
     name: "keywordSearch",
     val: CveParams {
@@ -104,17 +105,12 @@ func TestCveParamsQueryString(t *testing.T) {
     },
     exp: "keywordSearch=foo",
   }, {
-    name: "lastModStartDate",
-    val: CveParams {
-      LastModStartDate: MustParseTime("2023-12-01T12:34:56Z"),
-    },
-    exp: "lastModStartDate=2023-12-01T12%3A34%3A56Z",
-  }, {
-    name: "lastModEndDate",
+    name: "lastModEndDate and lastModStartDate",
     val: CveParams {
       LastModEndDate: MustParseTime("2023-12-01T12:34:56Z"),
+      LastModStartDate: MustParseTime("2023-12-01T12:34:56Z"),
     },
-    exp: "lastModEndDate=2023-12-01T12%3A34%3A56Z",
+    exp: "lastModEndDate=2023-12-01T12%3A34%3A56Z&lastModStartDate=2023-12-01T12%3A34%3A56Z",
   }, {
     name: "noRejected",
     val: CveParams {
@@ -122,17 +118,12 @@ func TestCveParamsQueryString(t *testing.T) {
     },
     exp: "noRejected=",
   }, {
-    name: "pubStartDate",
-    val: CveParams {
-      PubStartDate: MustParseTime("2023-12-01T12:34:56Z"),
-    },
-    exp: "pubStartDate=2023-12-01T12%3A34%3A56Z",
-  }, {
-    name: "pubEndDate",
+    name: "pubEndDate and pubStartDate",
     val: CveParams {
       PubEndDate: MustParseTime("2023-12-01T12:34:56Z"),
+      PubStartDate: MustParseTime("2023-12-01T12:34:56Z"),
     },
-    exp: "pubEndDate=2023-12-01T12%3A34%3A56Z",
+    exp: "pubEndDate=2023-12-01T12%3A34%3A56Z&pubStartDate=2023-12-01T12%3A34%3A56Z",
   }, {
     name: "resultsPerPage",
     val: CveParams {
@@ -152,35 +143,25 @@ func TestCveParamsQueryString(t *testing.T) {
     },
     exp: "sourceIdentifier=foo",
   }, {
-    name: "versionStart",
+    name: "versionStart and versionStartType",
     val: CveParams {
       VersionStart: "1.2.3",
-    },
-    exp: "versionStart=1.2.3",
-  }, {
-    name: "versionStartType",
-    val: CveParams {
       VersionStartType: Including,
     },
-    exp: "versionStartType=including",
+    exp: "versionStart=1.2.3&versionStartType=including",
   }, {
-    name: "versionEnd",
+    name: "versionEnd and versionEndType",
     val: CveParams {
       VersionEnd: "1.2.3",
-    },
-    exp: "versionEnd=1.2.3",
-  }, {
-    name: "versionEndType",
-    val: CveParams {
       VersionEndType: Excluding,
     },
-    exp: "versionEndType=excluding",
+    exp: "versionEnd=1.2.3&versionEndType=excluding",
   }, {
     name: "virtualMatchString",
     val: CveParams {
-      VirtualMatchString: "foo",
+      VirtualMatchString: MustParseCpeMatchString("cpe:2.3:foo"),
     },
-    exp: "virtualMatchString=foo",
+    exp: "virtualMatchString=cpe%3A2.3%3Afoo",
   }}
 
   // run pass tests
