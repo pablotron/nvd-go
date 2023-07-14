@@ -1,8 +1,8 @@
-package nvd
+package cve
 
 import "testing"
 
-func TestNewCveId(t *testing.T) {
+func TestParseId(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -19,7 +19,7 @@ func TestNewCveId(t *testing.T) {
 
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
-      id, err := NewCveId(test.val)
+      id, err := ParseId(test.val)
       if err != nil {
         t.Fatal(err)
       }

@@ -2,6 +2,7 @@ package nvd
 
 import (
   "pmdn.org/nvd-api/cpe"
+  "pmdn.org/nvd-api/cve"
   "testing"
 )
 
@@ -30,7 +31,7 @@ func TestCveParamsQueryString(t *testing.T) {
     name: "multiple params",
     val: CveParams {
       KeywordSearch: "foo",
-      CveId: MustParseCveId("CVE-2023-1234"),
+      CveId: cve.MustParseId("CVE-2023-1234"),
     },
     exp: "cveId=CVE-2023-1234&keywordSearch=foo",
   }, {

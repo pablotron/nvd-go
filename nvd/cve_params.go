@@ -5,13 +5,14 @@ import (
   "fmt"
   net_url "net/url"
   "pmdn.org/nvd-api/cpe"
+  "pmdn.org/nvd-api/cve"
   "reflect"
 )
 
 // Search parameters for `Cves()` method.
 type CveParams struct {
   CpeName *cpe.Name `url:"cpeName"`
-  CveId *CveId `url:"cveId"`
+  CveId *cve.Id `url:"cveId"`
   CvssV2Metrics string `url:"cvssV2Metrics"`
   CvssV2Severity *CvssSeverity `url:"cvssV2Severity"`
   CvssV3Metrics string `url:"cvssV3Metrics"`
