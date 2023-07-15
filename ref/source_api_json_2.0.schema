@@ -1,0 +1,77 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "JSON Schema for NVD CVE Source API version 2.0",
+	"$id": "https://csrc.nist.gov/schema/nvd/api/2.0/source_api_json_2.0.schema",
+    "definitions": {
+    "source": {
+      "description": "CVE assigner",
+      "type": "object",
+      "properties": {
+		"contactEmail": {
+          "type": "string"
+        },
+		"lastModified": {
+          "type": "string",
+		  "format": "date-time"
+        },
+		"created": {
+          "type": "string",
+		  "format": "date-time"
+        },
+		"v2AcceptanceLevel": {
+          "$ref": "#/definitions/acceptLevel"
+        },
+		"v3AcceptanceLevel": {
+          "$ref": "#/definitions/acceptLevel"
+        },
+		"cweAcceptanceLevel": {
+          "$ref": "#/definitions/acceptLevel"
+        },
+        "sourceIdentifiers": {
+          "type": "array",
+		  "items": {
+			"type": "string"
+		  }
+        }
+      },
+      "required": [
+        "created", "lastModified", "sourceIdentifiers"
+      ]
+    },
+	"acceptLevel": {
+		"type": "object",
+		"properties": {
+			"description": {
+			"type": "string"
+			},
+			"lastModified": {
+			"type": "string",
+			"format": "date-time"
+			}
+		},
+		"required": ["description", "lastModified"]
+	}
+    },
+    "type": "object",
+    "properties": {
+		"resultsPerPage": {"type": "integer"},
+		"startIndex": {"type": "integer"},
+		"totalResults": {"type": "integer"},
+		"format": {"type": "string"},
+		"version": {"type": "string"},
+		"timestamp": {"type": "string", "format": "date-time"},
+        "sources": {
+            "description": "Array of CVE Assigners",
+            "type": "array",
+            "items": {"$ref": "#/definitions/source"}
+        }
+    },
+    "required": [
+		"resultsPerPage",
+		"startIndex",
+		"totalResults",
+		"format",
+		"version",
+		"timestamp"
+    ]
+}
