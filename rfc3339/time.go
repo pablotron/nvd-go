@@ -1,4 +1,4 @@
-package nvd_api
+package rfc3339
 
 import (
   "errors"

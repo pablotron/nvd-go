@@ -7,7 +7,8 @@ import "fmt"
 type Severity byte
 
 const (
-  UnknownSeverity Severity = iota
+  Unknown Severity = iota
+  None // None
   Low // Low severity
   Medium // Medium severity
   High // High severity

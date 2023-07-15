@@ -5,6 +5,7 @@ import (
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/cvss"
   "pmdn.org/nvd-go/cwe"
+  "pmdn.org/nvd-go/rfc3339"
   "testing"
 )
 
@@ -113,8 +114,8 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "lastModEndDate and lastModStartDate",
     val: CveParams {
-      LastModEndDate: MustParseTime("2023-12-01T12:34:56Z"),
-      LastModStartDate: MustParseTime("2023-12-01T12:34:56Z"),
+      LastModEndDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
+      LastModStartDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
     },
     exp: "lastModEndDate=2023-12-01T12%3A34%3A56Z&lastModStartDate=2023-12-01T12%3A34%3A56Z",
   }, {
@@ -126,8 +127,8 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "pubEndDate and pubStartDate",
     val: CveParams {
-      PubEndDate: MustParseTime("2023-12-01T12:34:56Z"),
-      PubStartDate: MustParseTime("2023-12-01T12:34:56Z"),
+      PubEndDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
+      PubStartDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
     },
     exp: "pubEndDate=2023-12-01T12%3A34%3A56Z&pubStartDate=2023-12-01T12%3A34%3A56Z",
   }, {

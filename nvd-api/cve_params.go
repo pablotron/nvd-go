@@ -8,6 +8,7 @@ import (
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/cvss"
   "pmdn.org/nvd-go/cwe"
+  "pmdn.org/nvd-go/rfc3339"
   "reflect"
 )
 
@@ -27,11 +28,11 @@ type CveParams struct {
   IsVulnerable bool `url:"isVulnerable"`
   KeywordExactMatch bool `url:"keywordExactMatch"`
   KeywordSearch string `url:"keywordSearch"`
-  LastModStartDate *Time `url:"lastModStartDate"`
-  LastModEndDate *Time `url:"lastModEndDate"`
+  LastModStartDate *rfc3339.Time `url:"lastModStartDate"`
+  LastModEndDate *rfc3339.Time `url:"lastModEndDate"`
   NoRejected bool `url:"noRejected"`
-  PubStartDate *Time `url:"pubStartDate"`
-  PubEndDate *Time `url:"pubEndDate"`
+  PubStartDate *rfc3339.Time `url:"pubStartDate"`
+  PubEndDate *rfc3339.Time `url:"pubEndDate"`
   ResultsPerPage uint `url:"resultsPerPage"`
   StartIndex uint `url:"startIndex"`
   SourceIdentifier string `url:"sourceIdentifier"`
@@ -92,7 +93,7 @@ const maxResultsPerPage = 2000
 // maximum number of days for date ranges
 const maxDateRangeDays = 120.0
 
-func checkDateRange(name string, start, end *Time) error {
+func checkDateRange(name string, start, end *rfc3339.Time) error {
   if start == nil && end == nil {
     return nil
   } else if start != nil && end == nil {
