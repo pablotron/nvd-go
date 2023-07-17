@@ -1,6 +1,7 @@
 package cve
 
 import (
+  "encoding/json"
   "fmt"
   "strings"
   "strconv"
@@ -105,4 +106,22 @@ func (id *Id) Num() uint32 {
   } else {
     return 0
   }
+}
+
+// Unmarshal JSON string as CVE ID.
+func (id *Id) UnmarshalJSON(b []byte) error {
+  // unmarshal string
+  var s string
+  if err := json.Unmarshal(b, &s); err != nil {
+    return err
+  }
+
+  // parse string
+  new_id, err := ParseId(s)
+  if err != nil {
+    return err
+  }
+
+  *id = *new_id
+  return nil
 }
