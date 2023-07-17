@@ -1,6 +1,7 @@
 package rfc3339
 
 import (
+  "encoding/json"
   "errors"
   "time"
 )
@@ -10,16 +11,16 @@ type Time time.Time
 
 // Parse given string as Time or panic on error.
 func MustParseTime(s string) *Time {
-  if t, err := NewTime(s); err != nil {
+  if t, err := ParseTime(s); err != nil {
     panic(err)
   } else {
     return t
   }
 }
 
-// Create new Time object from given string.  Returns error if the given
-// string could not be parsed as a time.
-func NewTime(s string) (*Time, error) {
+// Parse RFC3339 timestamp with time zone from given string.  Returns
+// error if the given string could not be parsed as a time.
+func ParseTime(s string) (*Time, error) {
   if t, err := time.Parse(time.RFC3339, s); err == nil {
     r := Time(t)
     return &r, nil
@@ -50,4 +51,21 @@ func (t *Time) String() string {
   } else {
     return ""
   }
+}
+
+func (t *Time) UnmarshalJSON(b []byte) error {
+  // unmarshal string
+  var s string
+  if err := json.Unmarshal(b, &s); err != nil {
+    return err
+  }
+
+  // parse string
+  nt, err := ParseTime(s)
+  if err != nil {
+    return err
+  }
+
+  *t = *nt
+  return nil
 }

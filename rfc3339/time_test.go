@@ -5,7 +5,7 @@ import (
   "time"
 )
 
-func TestNewTime(t *testing.T) {
+func TestParseTime(t *testing.T) {
   passTests := []struct {
     name string // test name
     val string // test value
@@ -27,7 +27,7 @@ func TestNewTime(t *testing.T) {
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
       // parse time
-      nvdTime, err := NewTime(test.val)
+      nvdTime, err := ParseTime(test.val)
       if err != nil {
         t.Fatal(err)
       }
