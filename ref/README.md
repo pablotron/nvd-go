@@ -1,29 +1,46 @@
-# Endpoints
+# Reference Data
 
-## Data Sources
+Use the `gen-enums.rb` script to generate a [Go][] package from the
+given [JSON Schema][] file.
 
-* Documentation: https://nvd.nist.gov/developers/data-sources
-* API Endpoint: https://services.nvd.nist.gov/rest/json/source/2.0
+Example:
 
-## Products
+    # generate cvss31/cvss31.go from 
+    ./gen-enums.rb cvss31 < cvss-v3.1.json > cvss31/cvss31.go
 
-* Documentation: https://nvd.nist.gov/developers/products
+## Endpoints
 
-### CPE API
+NVD API endpoints and documentation.
 
-* Endpoint: https://services.nvd.nist.gov/rest/json/cpes/2.0
+### Data Sources
 
-### Match Criteria API
+* Documentation: <https://nvd.nist.gov/developers/data-sources>
+* API Endpoint: <https://services.nvd.nist.gov/rest/json/source/2.0>
 
-* Endpoint: https://services.nvd.nist.gov/rest/json/cpematch/2.0
+### Products
 
-## Vulnerabilities
+* Documentation: <https://nvd.nist.gov/developers/products>
 
-### CVE API
+#### CPE API
 
-* Documentation: https://nvd.nist.gov/developers/vulnerabilities
-* Endpoint: https://services.nvd.nist.gov/rest/json/cves/2.0
+* Endpoint: <https://services.nvd.nist.gov/rest/json/cpes/2.0>
 
-### CVE Change History API
+#### Match Criteria API
 
-* Endpoint: https://services.nvd.nist.gov/rest/json/cvehistory/2.0
+* Endpoint: <https://services.nvd.nist.gov/rest/json/cpematch/2.0>
+
+### Vulnerabilities
+
+#### CVE API
+
+* Documentation: <https://nvd.nist.gov/developers/vulnerabilities>
+* Endpoint: <https://services.nvd.nist.gov/rest/json/cves/2.0>
+
+#### CVE Change History API
+
+* Endpoint: <https://services.nvd.nist.gov/rest/json/cvehistory/2.0>
+
+[go]: https://go.dev/
+  "Go programming language."
+[json schema]: https://json-schema.org/
+  "JSON schema."
