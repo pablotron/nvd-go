@@ -36,14 +36,27 @@ func readTestData(t *testing.T, path string) []byte {
 }
 
 func TestResponse(t *testing.T) {
-  // read test response
-  data := readTestData(t, "testdata/cves-response.json.gz")
+  passTests := []struct {
+    name string // test name
+    path string // test json file
+  } {{
+    name: "1999",
+    path: "testdata/cves-response-1999.json.gz",
+  }, {
+    name: "2023",
+    path: "testdata/cves-response-2023.json.gz",
+  }}
 
-  // unmarshal response
-  var r Response
-  if err := json.Unmarshal(data, &r); err != nil {
-    t.Fatal(err)
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      // read response data
+      data := readTestData(t, test.path)
+
+      // unmarshal response
+      var r Response
+      if err := json.Unmarshal(data, &r); err != nil {
+        t.Fatal(err)
+      }
+    })
   }
-
-  t.Logf("%v", r)
 }
