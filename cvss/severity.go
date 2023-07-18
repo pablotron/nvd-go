@@ -62,3 +62,16 @@ func (s Severity) String() string {
     return ""
   }
 }
+
+// Unmarshal severity from text.
+func (s *Severity) UnmarshalText(b []byte) error {
+  // parse severity
+  ns, err := ParseSeverity(string(b))
+  if err != nil {
+    return err
+  }
+
+  // save result, return success
+  *s = *ns
+  return nil
+}
