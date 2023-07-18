@@ -29,11 +29,11 @@ type InvalidTypeString struct {
   Type, Value string
 }
 
-func newInvalidTypeString(type, value string) &InvalidTypeString {
-  return &InvalidTypeString { type, value }
+func newInvalidTypeString(typeName, value string) *InvalidTypeString {
+  return &InvalidTypeString { typeName, value }
 }
 
-func (e InvalidTypeString) Error() string {
+func (t InvalidTypeString) Error() string {
   return fmt.Sprintf("invalid %%s: \\"%%s\\"", t.Type, t.Value)
 }
 
@@ -56,6 +56,7 @@ const (
 // Parse %<type>s from string.
 func Parse%<type>s(s string) (%<type>s, error) {
   switch s {%<parse_cases>s
+  default:
     return Invalid%<type>s, newInvalidTypeString("%<type>s", s)
   }
 }
@@ -92,7 +93,7 @@ func (v *%<type>s) MarshalText() ([]byte, error) {
 
   string_case: %{
   case %<name>s:
-    return %<pack>s[%<ofs>d:%<len>d]},
+    return %<pack>s[%<pack_lo>d:%<pack_hi>d]},
 
   unmarshal_case: %{
   case "%<val>s":
@@ -194,8 +195,8 @@ puts(T[:main] % {
         type: type.title,
         comment: type.comment,
         val: val,
-        ofs: PACK_DATA.index(val),
-        len: val.size,
+        pack_lo: PACK_DATA.index(val),
+        pack_hi: PACK_DATA.index(val) + val.size,
         name: enum_name,
       }
     }
