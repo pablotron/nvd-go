@@ -43,7 +43,7 @@ func MustParseMatch(s string) *Match {
 }
 
 // Does this CPE match string match a range of versions?
-func (m Match) matchesVersionRange() bool {
+func (m Match) RangedVersion() bool {
   cs := []string(m)
   return len(cs) < 4 || cs[3] == "*"
 }
