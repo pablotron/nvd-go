@@ -5,7 +5,7 @@
 # gen-enums.rb: generate enum code for given JSON schema.
 #
 # Example:
-#   ./gen-enums.rb cvssv31 < cvss-v3.1.json > cvssv31/cvssv31.go
+#   ./gen-enums.rb cvss31 < cvss-v3.1.json > cvss31/cvss31.go
 #
 # TODO: should be rewritten to work with `go generate`.
 #
