@@ -52,3 +52,14 @@ func (m Match) RangedVersion() bool {
 func (m Match) String() string {
   return "cpe:2.3:" + strings.Join([]string(m), ":")
 }
+
+// Unmarshal CPE match string from text.
+func (m *Match) UnmarshalText(b []byte) error {
+  nm, err := ParseMatch(string(b))
+  if err != nil {
+    return err
+  }
+
+  *m = *nm
+  return nil
+}
