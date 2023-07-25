@@ -186,6 +186,7 @@ func (v Vector) Elements() []Element {
   return r
 }
 
+// CVSS v3.1 vector prefix
 const prefix = "CVSS:3.1"
 
 // Return vector as string
@@ -214,32 +215,35 @@ var elementStrs = map[string]struct {
 {{ end }}
 }
 
-var errMissingPrefix = errors.New("invalid vector: missing prefix")
-var errInvalidPrefix = errors.New("invalid vector: invalid prefix")
+// Error returned by ParseVector() if the prefix is missing.
+var errMissingPrefix = errors.New("invalid vector string: missing prefix")
+
+// Error returned by ParseVector() if the prefix is invalid.
+var errInvalidPrefix = errors.New("invalid vector string: invalid prefix")
 
 // parse string into CVSS v3.1 vector.
 func ParseVector(s string) (Vector, error) {
-  const checkPrefix = "CVSS:3.1/"
-  r := uint64(0)
-
-  // check length
-  if len(s) <= len(checkPrefix) {
+  // split string into prefix and elements
+  parts := strings.Split(s, "/")
+  if len(elems) < 2 {
     return Vector(0), errMissingPrefix
   }
 
   // check prefix
-  if s[0:len(checkPrefix)] != checkPrefix {
-    return Vector(0), errInvalidPerfix
+  if elems[0] != prefix {
+    return Vector(0), errInvalidPrefix
   }
 
-  // split into element strings
-  for _, es := range(strings.Split(s[len(checkPrefix):], "/")) {
+  // parse elements, build result
+  r := uint64(0)
+  for _, es := range(elems[1:]) {
     // parse element string
     d, ok := elementStrs[es]
     if !ok {
       return Vector(0), fmt.Errorf("invalid element: %s", es)
     }
 
+    // add to result
     r &= ~(((1 << uint64(d.mask)) - 1) << uint64(d.shift)) // clear
     r |= uint64(d.val) << uint64(d.shift) // set value
   }
