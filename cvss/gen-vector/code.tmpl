@@ -5,6 +5,7 @@
 package {{.ns}}
 
 import (
+  "errors"
   "fmt"
   "strings"
 )
@@ -115,13 +116,13 @@ type Element uint8
 
 const (
   invalidElement Element = iota,
-{{ range .keys }}
-  {{ $id := .Id }}
-  {{ $name := .Name }}
+{{ range .keys -}}
+  {{- $id := .Id -}}
+  {{- $name := .Name -}}
   {{ range .Enum.Values }}
     {{ $id }}_{{ .Id }}, // {{ $id }}:{{ .Id }} ({{ $name }}: {{ .Name }})
   {{ end }}
-{{ end }}
+{{- end }}
   lastElement
 )
 
@@ -161,31 +162,35 @@ type Vector uint64
 // Map of packed element value to element constant.  Used by Elements()
 // to unpack a packed vector.
 const packedElements = [...]Element {
-{{ range .keys }}
+{{ range .keys -}}
   // {{ .Id }}
-  {{ range $i, $e := packed_elements .Id .Enum.Values }}
+  {{ range $i, $e := packed_elements .Id .Enum.Values -}}
     {{ $e }},
   {{ end }}
-{{ end }}
+{{- end -}}
 }
 
 // Return list of vector elements.
 func (v Vector) Elements() []Element {
+  // allocate result
   r := make([]Element, 0, {{len .keys}})
 
-{{ range $i, $k := .keys }}
+{{- range $i, $k := .keys }}
   // {{ $k.Id }}
   if val := (uint64(v) >> {{$k.Shift}}) & ((1 << {{$k.Mask}}) - 1); val > 0 {
     r = append(r, packedElements[({{ $i }} << 3) + val])
   }
-{{ end }}
+{{- end }}
 
+  // return result
   return r
 }
 
+const prefix = "CVSS:3.1"
+
 // Return vector as string
 func (v Vector) String() string {
-  r := []string { "CVSS:3.1" }
+  r := []string { prefix }
 
   for e := range(v.Elements()) {
     r := append(r, e.String())
@@ -193,4 +198,52 @@ func (v Vector) String() string {
 
   // build result
   return strings.Join(r, "/")
+}
+
+// map of element string to shift, mask, and value
+var elementStrs = map[string]struct {
+  // shift and mask size (in bits) within vector
+  shift, mask uint8 // shift/mask within vector uint64
+  val uint8 // value to write in vector uint64
+} {
+{{- range .keys }}
+  {{- $k := . -}}
+  {{- range $i, $v := .Enum.Values }}
+    "{{ $k.Id }}:{{ $v.Id }}": { {{ $k.Shift }}, {{ $k.Mask }}, {{ $i }} + 1 },
+  {{- end -}}
+{{ end }}
+}
+
+var errMissingPrefix = errors.New("invalid vector: missing prefix")
+var errInvalidPrefix = errors.New("invalid vector: invalid prefix")
+
+// parse string into CVSS v3.1 vector.
+func ParseVector(s string) (Vector, error) {
+  const checkPrefix = "CVSS:3.1/"
+  r := uint64(0)
+
+  // check length
+  if len(s) <= len(checkPrefix) {
+    return Vector(0), errMissingPrefix
+  }
+
+  // check prefix
+  if s[0:len(checkPrefix)] != checkPrefix {
+    return Vector(0), errInvalidPerfix
+  }
+
+  // split into element strings
+  for _, es := range(strings.Split(s[len(checkPrefix):], "/")) {
+    // parse element string
+    d, ok := elementStrs[es]
+    if !ok {
+      return Vector(0), fmt.Errorf("invalid element: %s", es)
+    }
+
+    r &= ~(((1 << uint64(d.mask)) - 1) << uint64(d.shift)) // clear
+    r |= uint64(d.val) << uint64(d.shift) // set value
+  }
+
+  // return result
+  return Vector(r), nil
 }
