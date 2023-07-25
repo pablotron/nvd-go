@@ -798,12 +798,12 @@ func ParseVector(s string) (Vector, error) {
   // split string into prefix and elements
   parts := strings.Split(s, "/")
   if len(parts) < 2 {
-    return Vector(0), fmt.Errorf("invalid vector string: missing prefix: \"%s\"", s)
+    return Vector(0), fmt.Errorf("missing prefix: \"%s\"", s)
   }
 
   // check prefix
   if parts[0] != prefix {
-    return Vector(0), fmt.Errorf("invalid vector string: invalid prefix: \"%s\"", parts[0])
+    return Vector(0), fmt.Errorf("invalid prefix: \"%s\"", parts[0])
   }
 
   // parse elements, build result
@@ -812,12 +812,12 @@ func ParseVector(s string) (Vector, error) {
     // parse element string
     d, ok := elementStrs[es]
     if !ok {
-      return Vector(0), fmt.Errorf("invalid vector string: unknown element: \"%s\"", es)
+      return Vector(0), fmt.Errorf("unknown element: \"%s\"", es)
     }
 
-    // check for duplicate
+    // check for duplicate element
     if (r & (((1 << uint64(d.mask)) - 1) << uint64(d.shift))) != 0 {
-      return Vector(0), fmt.Errorf("invalid vector string: duplicate element: \"%s\"", es)
+      return Vector(0), fmt.Errorf("duplicate element: \"%s\"", es)
     }
 
     // add to result
