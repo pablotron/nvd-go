@@ -239,20 +239,7 @@ var keys = []struct {
   { "MA", "Modified Availability Impact", 53, 3, ModifiedImpact },
 }
 
-// // Limited subset of JSON schema (enough to parse CVSS definitions).
-// type Schema struct {
-//   Title string `json:"title"`
-// 
-//   Definitions map[string]struct {
-//     Type string `json:"type"`
-//     Enum []string `json:"enum"`
-//   } `json:"definitions"`
-// 
-//   Properties map[string]struct {
-//     Ref string `json:"$ref"`
-//   } `json:"properties"`
-// }
-
+// template functions
 var fns = template.FuncMap {
   "packed_elements": func(id string, vals []Value) []string {
     r := []string { "invalidElement" }
