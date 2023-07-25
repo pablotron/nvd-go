@@ -241,14 +241,14 @@ var keys = []struct {
 
 // template functions
 var fns = template.FuncMap {
-  "packed_elements": func(id string, vals []Value) []string {
-    r := []string { "invalidElement" }
+  "packed_metrics": func(id string, vals []Value) []string {
+    r := []string { "invalidMetric" }
 
     for i := 0; i < 7; i += 1 {
       if i < len(vals) {
         r = append(r, fmt.Sprintf("%s_%s", id, vals[i].Id))
       } else {
-        r = append(r, "invalidElement")
+        r = append(r, "invalidMetric")
       }
     }
 
@@ -284,7 +284,7 @@ func getPack() (string, map[string]int) {
       lut[v.Id] = true
       lut[v.Name] = true
 
-      // add element name
+      // add metric name
       lut[fmt.Sprintf("%s:%s", k.Id, v.Id)] = true
     }
   }
