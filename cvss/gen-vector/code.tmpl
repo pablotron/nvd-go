@@ -235,8 +235,12 @@ func ParseVector(s string) (Vector, error) {
       return Vector(0), fmt.Errorf("invalid vector string: unknown element: \"%s\"", es)
     }
 
+    // check for duplicate
+    if (r & (((1 << uint64(d.mask)) - 1) << uint64(d.shift))) != 0 {
+      return Vector(0), fmt.Errorf("invalid vector string: duplicate element: \"%s\"", es)
+    }
+
     // add to result
-    r &= ^(((1 << uint64(d.mask)) - 1) << uint64(d.shift)) // clear
     r |= uint64(d.val) << uint64(d.shift) // set value
   }
 
