@@ -250,7 +250,6 @@ func TestParseVector(t *testing.T) {
     expEls []Element // expected elements
   } {
     { "CVSS:3.1/AV:N", "CVSS:3.1/AV:N", []Element { AV_N } },
-    { "CVSS:3.1/AV:N", "CVSS:3.1/AV:N", []Element { AV_N } },
     { "CVSS:3.1/AV:A", "CVSS:3.1/AV:A", []Element { AV_A } },
     { "CVSS:3.1/AV:L", "CVSS:3.1/AV:L", []Element { AV_L } },
     { "CVSS:3.1/AV:P", "CVSS:3.1/AV:P", []Element { AV_P } },
@@ -363,6 +362,35 @@ func TestParseVector(t *testing.T) {
           t.Fatalf("got \"%v\", exp \"%v\"", got, exp)
         }
       })
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "wrong version",
+    val: "CVSS:3.0/AV:N",
+  }, {
+    name: "invalid element",
+    val: "CVSS:3.0/foo",
+  }, {
+    name: "duplicate element",
+    val: "CVSS:3.1/AV:N/AV:A",
+  }}
+
+  // run fail tests
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      // parse vector
+      if vec, err := ParseVector(test.val); err == nil {
+        t.Fatalf("got %v, exp err", vec)
+      }
     })
   }
 }
