@@ -5,7 +5,6 @@
 package {{.ns}}
 
 import (
-  "errors"
   "fmt"
   "strings"
 )
@@ -13,30 +12,30 @@ import (
 // packed strings
 const pack = "{{.pack}}"
 
-// offset and length of Key strings in packed string.
-const keys = [...]struct {
-  idOfs, idLen uint16
-  nameOfs, nameLen uint16
+// offset and length of packed Key strings
+var keys = [...]struct {
+  idOfs, idLen uint16 // id string offset and length
+  nameOfs, nameLen uint16 // name string offset and length
 } {
   { 0, 0, 0, 0 }, // invalidKey
-{{ range .keys }}
+{{- range .keys }}
   { {{ index $offsets .Id }}, {{ len .Id }}, {{ index $offsets .Name }}, {{ len .Name }} },  // {{ .Name }}
-{{ end }}
+{{- end }}
 }
 
 // Vector element key.
 type Key uint8
 const (
-  invalidKey Key = iota,
-{{ range .keys }}
-  {{ .Id }}, // {{ .Name }}
-{{ end }}
+  invalidKey Key = iota
+{{- range .keys }}
+  {{ .Id }} // {{ .Name }}
+{{- end }}
   lastKey
 )
 
 // Convert Key to string.
 func (k Key) String() string {
-  if k < lastKey {
+  if uint8(k) < uint8(lastKey) {
     d := keys[uint8(k)]
     return pack[d.idOfs:(d.idOfs+d.idLen)]
   } else {
@@ -46,7 +45,7 @@ func (k Key) String() string {
 
 // Convert Key to name string.
 func (k Key) Name() string {
-  if k < lastKey {
+  if uint8(k) < uint8(lastKey) {
     d := keys[uint8(k)]
     return pack[d.nameOfs:(d.nameOfs+d.nameLen)]
   } else {
@@ -55,29 +54,29 @@ func (k Key) Name() string {
 }
 
 // offset and length of ID and name strings in packed string.
-const values = [...]struct {
+var values = [...]struct {
   idOfs, idLen uint16
   nameOfs, nameLen uint16
 } {
   { 0, 0, 0, 0 }, // invalidValue
-{{ range .vals }}
-  { {{ index $offsets .Id }}, {{ len .Id }}, {{ index $offsets .Name }}, {{ len .Name }} },  // {{ .Name }}
-{{ end }}
+{{- range .vals }}
+  { {{ index $offsets .Id }}, {{ len .Id }}, {{ index $offsets .Name }}, {{ len .Name }} }, // {{ .Name }}
+{{- end }}
 }
 
 // Vector element value.
 type Value uint8
 const (
-  invalidValue Value = iota,
-{{ range .vals }}
-  {{ .Name }}, // {{ .Id }}
-{{ end }}
+  invalidValue Value = iota
+{{- range .vals }}
+  {{ .Name }} // {{ .Id }}
+{{- end }}
   lastValue
 )
 
 // Convert Value to ID string.
 func (v Value) String() string {
-  if v < lastValue {
+  if uint8(v) < uint8(lastValue) {
     d := values[uint8(v)]
     return pack[d.idOfs:(d.idOfs+d.idLen)]
   } else {
@@ -87,7 +86,7 @@ func (v Value) String() string {
 
 // Convert Value to name string.
 func (v Value) Name() string {
-  if v < lastValue {
+  if uint8(v) < uint8(lastValue) {
     d := values[uint8(v)]
     return pack[d.nameOfs:(d.nameOfs + d.nameLen)]
   } else {
@@ -96,39 +95,39 @@ func (v Value) Name() string {
 }
 
 // elements
-const elements = [...]struct {
+var elements = [...]struct {
   Key Key // element key
   Value Value // element value
   strOfs, strLen uint16 // offset and length of packed element strings
 } {
   { invalidKey, invalidValue, 0, 0 }, // invalidElement
-{{ range .keys }}
-  {{ $id := .Id }}
-  {{ $name := .Name }}
-  {{ range .Enum.Values }}
+{{- range .keys }}
+  {{- $id := .Id -}}
+  {{- $name := .Name -}}
+  {{- range .Enum.Values }}
     { {{ $id }}, {{ .Name }}, {{ index $offsets (printf "%s:%s" $id .Id)}}, ({{ len $id }} + 1 + {{ len .Id }}) }, // {{ $id }}_{{ .Id }}
-  {{ end }}
-{{ end }}
+  {{- end }}
+{{- end }}
 }
 
 // Single vector element.
 type Element uint8
 
 const (
-  invalidElement Element = iota,
-{{ range .keys -}}
+  invalidElement Element = iota
+{{- range .keys }}
   {{- $id := .Id -}}
   {{- $name := .Name -}}
-  {{ range .Enum.Values }}
-    {{ $id }}_{{ .Id }}, // {{ $id }}:{{ .Id }} ({{ $name }}: {{ .Name }})
-  {{ end }}
+  {{- range .Enum.Values }}
+    {{ $id }}_{{ .Id }} // {{ $id }}:{{ .Id }} ({{ $name }}: {{ .Name }})
+  {{- end }}
 {{- end }}
   lastElement
 )
 
 // Get element key.
 func (e Element) Key() Key {
-  if uint8(e) < lastElement {
+  if uint8(e) < uint8(lastElement) {
     return elements[uint8(e)].Key
   } else {
     return invalidKey
@@ -137,7 +136,7 @@ func (e Element) Key() Key {
 
 // Get element value.
 func (e Element) Value() Value {
-  if uint8(e) < lastElement {
+  if uint8(e) < uint8(lastElement) {
     return elements[uint8(e)].Value
   } else {
     return invalidValue
@@ -146,7 +145,7 @@ func (e Element) Value() Value {
 
 // Convert element to string.
 func (e Element) String() string {
-  if uint8(e) < lastElement {
+  if uint8(e) < uint8(lastElement) {
     d := elements[uint8(e)]
     return pack[d.strOfs:(d.strOfs + d.strLen)]
   } else {
@@ -161,12 +160,12 @@ type Vector uint64
 
 // Map of packed element value to element constant.  Used by Elements()
 // to unpack a packed vector.
-const packedElements = [...]Element {
-{{ range .keys -}}
+var packedElements = [...]Element {
+{{- range .keys -}}
   // {{ .Id }}
   {{ range $i, $e := packed_elements .Id .Enum.Values -}}
     {{ $e }},
-  {{ end }}
+  {{ end -}}
 {{- end -}}
 }
 
@@ -193,8 +192,8 @@ const prefix = "CVSS:3.1"
 func (v Vector) String() string {
   r := []string { prefix }
 
-  for e := range(v.Elements()) {
-    r := append(r, e.String())
+  for _, e := range(v.Elements()) {
+    r = append(r, e.String())
   }
 
   // build result
@@ -203,9 +202,8 @@ func (v Vector) String() string {
 
 // map of element string to shift, mask, and value
 var elementStrs = map[string]struct {
-  // shift and mask size (in bits) within vector
-  shift, mask uint8 // shift/mask within vector uint64
-  val uint8 // value to write in vector uint64
+  shift, mask uint8 // shift/mask
+  val uint8 // encoded value
 } {
 {{- range .keys }}
   {{- $k := . -}}
@@ -215,36 +213,30 @@ var elementStrs = map[string]struct {
 {{ end }}
 }
 
-// Error returned by ParseVector() if the prefix is missing.
-var errMissingPrefix = errors.New("invalid vector string: missing prefix")
-
-// Error returned by ParseVector() if the prefix is invalid.
-var errInvalidPrefix = errors.New("invalid vector string: invalid prefix")
-
-// parse string into CVSS v3.1 vector.
+// Parse string into CVSS v3.1 vector.
 func ParseVector(s string) (Vector, error) {
   // split string into prefix and elements
   parts := strings.Split(s, "/")
-  if len(elems) < 2 {
-    return Vector(0), errMissingPrefix
+  if len(parts) < 2 {
+    return Vector(0), fmt.Errorf("invalid vector string: missing prefix: \"%s\"", s)
   }
 
   // check prefix
-  if elems[0] != prefix {
-    return Vector(0), errInvalidPrefix
+  if parts[0] != prefix {
+    return Vector(0), fmt.Errorf("invalid vector string: invalid prefix: \"%s\"", parts[0])
   }
 
   // parse elements, build result
   r := uint64(0)
-  for _, es := range(elems[1:]) {
+  for _, es := range(parts[1:]) {
     // parse element string
     d, ok := elementStrs[es]
     if !ok {
-      return Vector(0), fmt.Errorf("invalid element: %s", es)
+      return Vector(0), fmt.Errorf("invalid vector string: unknown element: \"%s\"", es)
     }
 
     // add to result
-    r &= ~(((1 << uint64(d.mask)) - 1) << uint64(d.shift)) // clear
+    r &= ^(((1 << uint64(d.mask)) - 1) << uint64(d.shift)) // clear
     r |= uint64(d.val) << uint64(d.shift) // set value
   }
 
