@@ -283,7 +283,6 @@ func getPack() (string, map[string]int) {
     for _, v := range(k.Enum.Values) {
       lut[v.Id] = true
       lut[v.Name] = true
-      lut[v.Title] = true
 
       // add element name
       lut[fmt.Sprintf("%s:%s", k.Id, v.Id)] = true
