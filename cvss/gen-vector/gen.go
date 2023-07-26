@@ -19,268 +19,258 @@ type Value struct { Id, Name, Title string }
 // Enumeration.
 type Enum struct { Id, Name string; Values []Value }
 
-var AttackVector = Enum {
-  "AV",
-  "AttackVector",
-  []Value {
-    { "N", "Network", "NETWORK" },
-    { "A", "AdjacentNetwork", "ADJACENT_NETWORK" },
-    { "L", "Local", "LOCAL" },
-    { "P", "Physical", "PHYSICAL" },
+type metricKey struct {
+  Id, Name string // id and name of metric key
+  Shift, Mask uint8 // bit offset and size within vector uint64
+  Enum string // enumeration name
+}
+
+// CVSS version metadata
+type Version struct {
+  ns string // output namespace
+  version string // version string
+  defs map[string]Enum // enum definitions
+  enums []string // ordered list of enums
+  keys []metricKey // metric keys
+}
+
+// map of version ID to version metadata.
+var versions = map[string]Version {
+  "v31": Version {
+    ns: "v31", // namespace
+    version: "3.1", // version string
+
+    // enum definitions
+    defs: map[string]Enum {
+      "AttackVector": Enum {
+        "AV",
+        "AttackVector",
+        []Value {
+          { "N", "Network", "NETWORK" },
+          { "A", "AdjacentNetwork", "ADJACENT_NETWORK" },
+          { "L", "Local", "LOCAL" },
+          { "P", "Physical", "PHYSICAL" },
+        },
+      },
+
+      "ModifiedAttackVector": Enum {
+        "MAV",
+        "ModifiedAttackVector",
+        []Value {
+          { "N", "Network", "NETWORK" },
+          { "A", "AdjacentNetwork", "ADJACENT_NETWORK" },
+          { "L", "Local", "LOCAL" },
+          { "P", "Physical", "PHYSICAL" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "AttackComplexity": Enum {
+        "AC",
+        "AttackComplexity",
+        []Value {
+          { "H", "High", "HIGH" },
+          { "L", "Low", "LOW" },
+        },
+      },
+
+      "ModifiedAttackComplexity": Enum {
+        "MAC",
+        "ModifiedAttackComplexity",
+        []Value {
+          { "H", "High", "HIGH" },
+          { "L", "Low", "LOW" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "PrivilegesRequired": Enum {
+        "PR",
+        "PrivilegesRequired",
+        []Value {
+          { "H", "High", "HIGH" },
+          { "L", "Low", "LOW" },
+          { "N", "None", "NONE" },
+        },
+      },
+
+      "ModifiedPrivilegesRequired": Enum {
+        "MPR",
+        "ModifiedPrivilegesRequired",
+        []Value {
+          { "H", "High", "HIGH" },
+          { "L", "Low", "LOW" },
+          { "N", "None", "NONE" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "UserInteraction": Enum {
+        "UI",
+        "UserInteraction",
+        []Value {
+          { "N", "None", "NONE" },
+          { "R", "Required", "REQUIRED" },
+        },
+      },
+
+      "ModifiedUserInteraction": Enum {
+        "MUI",
+        "ModifiedUserInteraction",
+        []Value {
+          { "N", "None", "NONE" },
+          { "R", "Required", "REQUIRED" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "Scope": Enum {
+        "S",
+        "Scope",
+        []Value {
+          { "U", "Unchanged", "UNCHANGED" },
+          { "C", "Changed", "CHANGED" },
+        },
+      },
+
+      "ModifiedScope": Enum {
+        "MS",
+        "ModifiedScope",
+        []Value {
+          { "U", "Unchanged", "UNCHANGED" },
+          { "C", "Changed", "CHANGED" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "Impact": Enum {
+        "I",
+        "Impact",
+        []Value {
+          { "N", "None", "NONE" },
+          { "L", "Low", "LOW" },
+          { "H", "High", "HIGH" },
+        },
+      },
+
+      "ModifiedImpact": Enum {
+        "MI",
+        "ModifiedImpact",
+        []Value {
+          { "U", "Unchanged", "UNCHANGED" },
+          { "C", "Changed", "CHANGED" },
+          { "N", "None", "NONE" },
+          { "L", "Low", "LOW" },
+          { "H", "High", "HIGH" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "ExploitCodeMaturity": Enum {
+        "E",
+        "ExploitCodeMaturity",
+        []Value {
+          { "U", "Unproven", "UNPROVEN" },
+          { "P", "ProofOfConcept", "PROOF_OF_CONCEPT" },
+          { "F", "Functional", "FUNCTIONAL" },
+          { "H", "High", "HIGH" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "RemediationLevel": Enum {
+        "RL",
+        "RemediationLevel",
+        []Value {
+          { "O", "OfficialFix", "OFFICIAL_FIX" },
+          { "T", "TemporaryFix", "TEMPORARY_FIX" },
+          { "W", "Workaround", "WORKAROUND" },
+          { "U", "Unavailable", "UNAVAILABLE" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "Confidence": Enum {
+        "C",
+        "Confidence",
+        []Value {
+          { "U", "Unknown", "UNKNOWN" },
+          { "R", "Reasonable", "REASONABLE" },
+          { "C", "Confirmed", "CONFIRMED" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "Requirement": Enum {
+        "R",
+        "Requirement",
+        []Value {
+          { "L", "Low", "LOW" },
+          { "M", "Medium", "MEDIUM" },
+          { "H", "High", "HIGH" },
+          { "X", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+    },
+
+    // ordered list of enums
+    enums: []string {
+      "AttackVector",
+      "ModifiedAttackVector",
+      "AttackComplexity",
+      "ModifiedAttackComplexity",
+      "PrivilegesRequired",
+      "ModifiedPrivilegesRequired",
+      "UserInteraction",
+      "ModifiedUserInteraction",
+      "Scope",
+      "ModifiedScope",
+      "Impact",
+      "ModifiedImpact",
+      "ExploitCodeMaturity",
+      "RemediationLevel",
+      "Confidence",
+      "Requirement",
+    },
+
+    // metric keys
+    keys: []metricKey {
+      { "AV", "Attack Vector", 0, 3, "AttackVector" },
+      { "AC", "Attack Complexity", 3, 2, "AttackComplexity" },
+      { "PR", "Privileges Required", 5, 2, "PrivilegesRequired" },
+      { "UI", "User Interaction", 7, 2, "UserInteraction" },
+      { "S", "Scope", 9, 2, "Scope" },
+      { "C", "Confidentiality Impact", 11, 2, "Impact" },
+      { "I", "Integrity Impact", 13, 2, "Impact" },
+      { "A", "Availability Impact", 15, 2, "Impact" },
+      { "E", "Exploit Code Maturity", 17, 3, "ExploitCodeMaturity" },
+      { "RL", "Remediation Level", 20, 3, "RemediationLevel" },
+      { "RC", "Report Confidence", 23, 3, "Confidence" },
+      { "CR", "Confidentiality Requirement", 26, 3, "Requirement" },
+      { "IR", "Integrity Requirement", 29, 3, "Requirement" },
+      { "AR", "Availability Requirement", 32, 3, "Requirement" },
+      { "MAV", "Modified Attack Vector", 35, 3, "ModifiedAttackVector" },
+      { "MAC", "Modified Attack Complexity", 38, 2, "ModifiedAttackComplexity" },
+      { "MPR", "Modified Privileges Required", 40, 3, "ModifiedPrivilegesRequired" },
+      { "MUI", "Modified User Interaction", 43, 2, "ModifiedUserInteraction" },
+      { "MS", "Modified Scope", 45, 2, "ModifiedScope" },
+      { "MC", "Modified Confidentiality Impact", 47, 3, "ModifiedImpact" },
+      { "MI", "Modified Integrity Impact", 50, 3, "ModifiedImpact" },
+      { "MA", "Modified Availability Impact", 53, 3, "ModifiedImpact" },
+    },
   },
-}
-
-var ModifiedAttackVector = Enum {
-  "MAV",
-  "ModifiedAttackVector",
-  []Value {
-    { "N", "Network", "NETWORK" },
-    { "A", "AdjacentNetwork", "ADJACENT_NETWORK" },
-    { "L", "Local", "LOCAL" },
-    { "P", "Physical", "PHYSICAL" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var AttackComplexity = Enum {
-  "AC",
-  "AttackComplexity",
-  []Value {
-    { "H", "High", "HIGH" },
-    { "L", "Low", "LOW" },
-  },
-}
-
-var ModifiedAttackComplexity = Enum {
-  "MAC",
-  "ModifiedAttackComplexity",
-  []Value {
-    { "H", "High", "HIGH" },
-    { "L", "Low", "LOW" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var PrivilegesRequired = Enum {
-  "PR",
-  "PrivilegesRequired",
-  []Value {
-    { "H", "High", "HIGH" },
-    { "L", "Low", "LOW" },
-    { "N", "None", "NONE" },
-  },
-}
-
-var ModifiedPrivilegesRequired = Enum {
-  "MPR",
-  "ModifiedPrivilegesRequired",
-  []Value {
-    { "H", "High", "HIGH" },
-    { "L", "Low", "LOW" },
-    { "N", "None", "NONE" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var UserInteraction = Enum {
-  "UI",
-  "UserInteraction",
-  []Value {
-    { "N", "None", "NONE" },
-    { "R", "Required", "REQUIRED" },
-  },
-}
-
-var ModifiedUserInteraction = Enum {
-  "MUI",
-  "ModifiedUserInteraction",
-  []Value {
-    { "N", "None", "NONE" },
-    { "R", "Required", "REQUIRED" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var Scope = Enum {
-  "S",
-  "Scope",
-  []Value {
-    { "U", "Unchanged", "UNCHANGED" },
-    { "C", "Changed", "CHANGED" },
-  },
-}
-
-var ModifiedScope = Enum {
-  "MS",
-  "ModifiedScope",
-  []Value {
-    { "U", "Unchanged", "UNCHANGED" },
-    { "C", "Changed", "CHANGED" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var Impact = Enum {
-  "I",
-  "Impact",
-  []Value {
-    { "N", "None", "NONE" },
-    { "L", "Low", "LOW" },
-    { "H", "High", "HIGH" },
-  },
-}
-
-var ModifiedImpact = Enum {
-  "MI",
-  "ModifiedImpact",
-  []Value {
-    { "U", "Unchanged", "UNCHANGED" },
-    { "C", "Changed", "CHANGED" },
-    { "N", "None", "NONE" },
-    { "L", "Low", "LOW" },
-    { "H", "High", "HIGH" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var ExploitCodeMaturity = Enum {
-  "E",
-  "ExploitCodeMaturity",
-  []Value {
-    { "U", "Unproven", "UNPROVEN" },
-    { "P", "ProofOfConcept", "PROOF_OF_CONCEPT" },
-    { "F", "Functional", "FUNCTIONAL" },
-    { "H", "High", "HIGH" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var RemediationLevel = Enum {
-  "RL",
-  "RemediationLevel",
-  []Value {
-    { "O", "OfficialFix", "OFFICIAL_FIX" },
-    { "T", "TemporaryFix", "TEMPORARY_FIX" },
-    { "W", "Workaround", "WORKAROUND" },
-    { "U", "Unavailable", "UNAVAILABLE" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var Confidence = Enum {
-  "C",
-  "Confidence",
-  []Value {
-    { "U", "Unknown", "UNKNOWN" },
-    { "R", "Reasonable", "REASONABLE" },
-    { "C", "Confirmed", "CONFIRMED" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-var Requirement = Enum {
-  "R",
-  "Requirement",
-  []Value {
-    { "L", "Low", "LOW" },
-    { "M", "Medium", "MEDIUM" },
-    { "H", "High", "HIGH" },
-    { "X", "NotDefined", "NOT_DEFINED" },
-  },
-}
-
-// list of vector enums
-var enums = []Enum {
-  AttackVector,
-  ModifiedAttackVector,
-  AttackComplexity,
-  ModifiedAttackComplexity,
-  PrivilegesRequired,
-  ModifiedPrivilegesRequired,
-  UserInteraction,
-  ModifiedUserInteraction,
-  Scope,
-  ModifiedScope,
-  Impact,
-  ModifiedImpact,
-  ExploitCodeMaturity,
-  RemediationLevel,
-  Confidence,
-  Requirement,
-}
-
-// vector keys
-var keys = []struct {
-  Id, Name string
-  Shift, Mask uint8
-  Enum Enum
-} {
-  { "AV", "Attack Vector", 0, 3, AttackVector },
-  { "AC", "Attack Complexity", 3, 2, AttackComplexity },
-  { "PR", "Privileges Required", 5, 2, PrivilegesRequired },
-  { "UI", "User Interaction", 7, 2, UserInteraction },
-  { "S", "Scope", 9, 2, Scope },
-  { "C", "Confidentiality Impact", 11, 2, Impact },
-  { "I", "Integrity Impact", 13, 2, Impact },
-  { "A", "Availability Impact", 15, 2, Impact },
-  { "E", "Exploit Code Maturity", 17, 3, ExploitCodeMaturity },
-  { "RL", "Remediation Level", 20, 3, RemediationLevel },
-  { "RC", "Report Confidence", 23, 3, Confidence },
-  { "CR", "Confidentiality Requirement", 26, 3, Requirement },
-  { "IR", "Integrity Requirement", 29, 3, Requirement },
-  { "AR", "Availability Requirement", 32, 3, Requirement },
-  { "MAV", "Modified Attack Vector", 35, 3, ModifiedAttackVector },
-  { "MAC", "Modified Attack Complexity", 38, 2, ModifiedAttackComplexity },
-  { "MPR", "Modified Privileges Required", 40, 3, ModifiedPrivilegesRequired },
-  { "MUI", "Modified User Interaction", 43, 2, ModifiedUserInteraction },
-  { "MS", "Modified Scope", 45, 2, ModifiedScope },
-  { "MC", "Modified Confidentiality Impact", 47, 3, ModifiedImpact },
-  { "MI", "Modified Integrity Impact", 50, 3, ModifiedImpact },
-  { "MA", "Modified Availability Impact", 53, 3, ModifiedImpact },
-}
-
-// template functions
-var fns = template.FuncMap {
-  "packed_metrics": func(id string, vals []Value) []string {
-    r := []string { "invalidMetric" }
-
-    for i := 0; i < 7; i += 1 {
-      if i < len(vals) {
-        r = append(r, fmt.Sprintf("%s_%s", id, vals[i].Id))
-      } else {
-        r = append(r, "invalidMetric")
-      }
-    }
-
-    return r
-  },
-}
-
-//go:embed code.tmpl
-var CODE string
-
-// build code template
-var t = template.Must(template.New("").Funcs(fns).Parse(CODE))
-
-// get application name from command-line arguments
-func appName() string {
-  if len(os.Args) > 0 {
-    return os.Args[0]
-  } else {
-    return "gen-vector"
-  }
 }
 
 // Get packed string of strings and offset map.
-func getPack() (string, map[string]int) {
+func (v Version) getPack() (string, map[string]int) {
   // build lut of strings
   lut := map[string]bool{}
-  for _, k := range(keys) {
+  for _, k := range(v.keys) {
     lut[k.Id] = true
     lut[k.Name] = true
 
     // add enumeration values
-    for _, v := range(k.Enum.Values) {
+    for _, v := range(v.defs[k.Enum].Values) {
       lut[v.Id] = true
       lut[v.Name] = true
 
@@ -322,10 +312,10 @@ func getPack() (string, map[string]int) {
 }
 
 // Get sorted array of possible values
-func getVals() []Value {
+func (version Version) getVals() []Value {
   lut := map[string]Value {}
-  for _, e := range(enums) {
-    for _, v := range(e.Values) {
+  for _, e := range(version.enums) {
+    for _, v := range(version.defs[e].Values) {
       lut[v.Name] = v
     }
   }
@@ -347,26 +337,78 @@ func getVals() []Value {
   return r
 }
 
-func main() {
-  if len(os.Args) < 2 {
-    log.Fatalf("Usage: %s <packageName>", appName())
-  }
 
-  // get packed string and a map of offsets
-  pack, offsets := getPack()
+// template functions
+var fns = template.FuncMap {
+  "packed_metrics": func(id string, vals []Value) []string {
+    r := []string { "invalidMetric" }
+
+    for i := 0; i < 7; i += 1 {
+      if i < len(vals) {
+        r = append(r, fmt.Sprintf("%s_%s", id, vals[i].Id))
+      } else {
+        r = append(r, "invalidMetric")
+      }
+    }
+
+    return r
+  },
+}
+
+//go:embed code.tmpl
+var CODE string
+
+// build code template
+var t = template.Must(template.New("").Funcs(fns).Parse(CODE))
+
+// get application name from command-line arguments
+func appName() string {
+  if len(os.Args) > 0 {
+    return os.Args[0]
+  } else {
+    return "gen-vector"
+  }
+}
+
+// template arguments
+type TemplateArgs struct {
+  Ns string // namespace
+  Version string // version string
+  Pack string // packed string
+  Offsets map[string]int // map of string to byte offset in packed string
+  Defs map[string]Enum // enum definitions
+  Keys []metricKey // metric keys
+  Vals []Value // values
+}
+
+// Get template arguments from version metadata.
+func NewTemplateArgs(v Version) TemplateArgs {
+  pack, offsets := v.getPack() // get packed string and offset map
+  vals := v.getVals() // get values
+
+  // build/return template args
+  return TemplateArgs {
+    Ns: v.ns,
+    Version: v.version,
+    Pack: pack,
+    Offsets: offsets,
+    Defs: v.defs,
+    Keys: v.keys,
+    Vals: vals,
+  }
+}
+
+func main() {
+  // check args
+  if len(os.Args) < 2 {
+    log.Fatalf("Usage: %s <versionId>", appName())
+  }
 
   // build template args
-  args := map[string]any {
-    "ns": os.Args[1],
-    "pack": pack,
-    "offsets": offsets,
-    "enums": enums,
-    "keys": keys,
-    "vals": getVals(),
-  }
+  args := NewTemplateArgs(versions[os.Args[1]])
 
   // expand template, write to stdout
-  if err := t.Execute(os.Stdout, args); err != nil {
+  if err := t.Execute(os.Stdout, &args); err != nil {
     log.Fatal(err)
   }
 }
