@@ -25,6 +25,17 @@ type metricKey struct {
   Enum string // enumeration name
 }
 
+// Template parameters.
+type TemplateParams struct {
+  Ns string // namespace
+  Version string // version string
+  Pack string // packed string
+  Offsets map[string]int // map of string to byte offset in packed string
+  Defs map[string]Enum // enum definitions
+  Keys []metricKey // metric keys
+  Vals []Value // values
+}
+
 // CVSS version metadata
 type Version struct {
   ns string // output namespace
@@ -264,7 +275,7 @@ var versions = map[string]Version {
 // Get packed string of strings and offset map.
 func (v Version) getPack() (string, map[string]int) {
   // build lut of strings
-  lut := map[string]bool{}
+  lut := map[string]bool {}
   for _, k := range(v.keys) {
     lut[k.Id] = true
     lut[k.Name] = true
@@ -337,6 +348,22 @@ func (version Version) getVals() []Value {
   return r
 }
 
+// Get template parameters from version metadata.
+func (v Version) Params() TemplateParams {
+  pack, offsets := v.getPack() // get packed string and offset map
+  vals := v.getVals() // get values
+
+  // build/return template parameters
+  return TemplateParams {
+    Ns: v.ns,
+    Version: v.version,
+    Pack: pack,
+    Offsets: offsets,
+    Defs: v.defs,
+    Keys: v.keys,
+    Vals: vals,
+  }
+}
 
 // template functions
 var fns = template.FuncMap {
@@ -370,45 +397,23 @@ func appName() string {
   }
 }
 
-// template arguments
-type TemplateArgs struct {
-  Ns string // namespace
-  Version string // version string
-  Pack string // packed string
-  Offsets map[string]int // map of string to byte offset in packed string
-  Defs map[string]Enum // enum definitions
-  Keys []metricKey // metric keys
-  Vals []Value // values
-}
-
-// Get template arguments from version metadata.
-func NewTemplateArgs(v Version) TemplateArgs {
-  pack, offsets := v.getPack() // get packed string and offset map
-  vals := v.getVals() // get values
-
-  // build/return template args
-  return TemplateArgs {
-    Ns: v.ns,
-    Version: v.version,
-    Pack: pack,
-    Offsets: offsets,
-    Defs: v.defs,
-    Keys: v.keys,
-    Vals: vals,
-  }
-}
-
 func main() {
   // check args
   if len(os.Args) < 2 {
     log.Fatalf("Usage: %s <versionId>", appName())
   }
 
-  // build template args
-  args := NewTemplateArgs(versions[os.Args[1]])
+  // get version ID from arguments
+  id := os.Args[1]
+
+  // get version from version ID
+  version, ok := versions[id]
+  if !ok {
+    log.Fatalf("Unknwon version ID: %s", id)
+  }
 
   // expand template, write to stdout
-  if err := t.Execute(os.Stdout, &args); err != nil {
+  if err := t.Execute(os.Stdout, version.Params()); err != nil {
     log.Fatal(err)
   }
 }
