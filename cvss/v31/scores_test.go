@@ -1,9 +1,13 @@
 package v31
 
 import (
+  "bytes"
+  "compress/gzip"
+  "encoding/json"
   "pmdn.org/nvd-go/cvss"
   "reflect"
   "testing"
+  _ "embed"
 )
 
 func TestVectorScores(t *testing.T) {
@@ -277,6 +281,55 @@ func TestVectorScores(t *testing.T) {
       if !reflect.DeepEqual(got, test.exp) {
         t.Errorf("got %v, exp %v", got, test.exp)
       }
+    })
+  }
+}
+
+//go:embed testdata/v31-scores.json.gz
+var v31ScoresData []byte
+
+func TestMoreVectorScores(t *testing.T) {
+  var tests []struct {
+    Vector Vector `json:"vector"`
+    Score cvss.Score `json:"score"`
+    Severity cvss.Severity `json:"severity"`
+  }
+
+  // uncompress test data
+  gz, err := gzip.NewReader(bytes.NewBuffer(v31ScoresData))
+  if err != nil {
+    t.Fatal(err)
+  }
+  defer gz.Close()
+
+  // decode json
+  if err = json.NewDecoder(gz).Decode(&tests); err != nil {
+    t.Fatal(err)
+  }
+
+  for _, test := range(tests) {
+    t.Run(test.Vector.String(), func(t *testing.T) {
+      // get scores
+      scores, err := test.Vector.Scores()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      t.Run("score", func(t *testing.T) {
+        got := scores.Base
+        exp := test.Score
+        if got != exp {
+          t.Fatalf("got %s, exp %s", got, exp)
+        }
+      })
+
+      t.Run("severity", func(t *testing.T) {
+        got := scores.Base.Severity()
+        exp := test.Severity
+        if got != exp {
+          t.Fatalf("got %s, exp %s", got, exp)
+        }
+      })
     })
   }
 }
