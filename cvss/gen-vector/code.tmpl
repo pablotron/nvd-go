@@ -232,12 +232,12 @@ func ParseVector(s string) (Vector, error) {
     // parse metric string
     d, ok := metricStrs[ms]
     if !ok {
-      return Vector(0), fmt.Errorf("unknown metric: \"%s\"", es)
+      return Vector(0), fmt.Errorf("unknown metric: \"%s\"", ms)
     }
 
     // check for duplicate metrics
     if (r & (((1 << uint64(d.mask)) - 1) << uint64(d.shift))) != 0 {
-      return Vector(0), fmt.Errorf("duplicate metric: \"%s\"", es)
+      return Vector(0), fmt.Errorf("duplicate metric: \"%s\"", ms)
     }
 
     // add to result
@@ -246,4 +246,14 @@ func ParseVector(s string) (Vector, error) {
 
   // return result
   return Vector(r), nil
+}
+
+// Unmarshal vector from text.
+func (v *Vector) UnmarshalText(b []byte) error {
+  if nv, err := ParseVector(string(b)); err != nil {
+    return err
+  } else {
+    *v = nv
+    return nil
+  }
 }

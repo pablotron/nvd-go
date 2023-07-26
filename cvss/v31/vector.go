@@ -827,3 +827,13 @@ func ParseVector(s string) (Vector, error) {
   // return result
   return Vector(r), nil
 }
+
+// Unmarshal vector from text.
+func (v *Vector) UnmarshalText(b []byte) error {
+  if nv, err := ParseVector(string(b)); err != nil {
+    return err
+  } else {
+    *v = nv
+    return nil
+  }
+}
