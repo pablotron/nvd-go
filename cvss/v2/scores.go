@@ -5,6 +5,9 @@ import (
   "pmdn.org/nvd-go/cvss"
 )
 
+// Return pointer to float64 if the value is non-zero, or nil otherwise.
+//
+// Used by Scores() to handle temporal and environmental scores.
 func maybeFloat(v float64) *float64 {
   if v > 0.0 {
     return &v
