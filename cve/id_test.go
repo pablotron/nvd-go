@@ -15,6 +15,36 @@ func TestParseId(t *testing.T) {
     expString: "CVE-2023-1234",
     expYear: 2023,
     expNum: 1234,
+  }, {
+    name: "octal",
+    val: "CVE-2023-0013",
+    expString: "CVE-2023-0013",
+    expYear: 2023,
+    expNum: 13,
+  }, {
+    name: "min year",
+    val: "CVE-1900-1234",
+    expString: "CVE-1900-1234",
+    expYear: 1900,
+    expNum: 1234,
+  }, {
+    name: "max year",
+    val: "CVE-2155-1234",
+    expString: "CVE-2155-1234",
+    expYear: 2155,
+    expNum: 1234,
+  }, {
+    name: "min num",
+    val: "CVE-2023-0",
+    expString: "CVE-2023-0000",
+    expYear: 2023,
+    expNum: 0,
+  }, {
+    name: "max num",
+    val: "CVE-2023-16777215",
+    expString: "CVE-2023-16777215",
+    expYear: 2023,
+    expNum: 16777215,
   }}
 
   for _, test := range(passTests) {
@@ -69,7 +99,7 @@ func TestParseId(t *testing.T) {
     val: "CVE-2156-0",
   }, {
     name: "high number",
-    val: "CVE-2156-16777216",
+    val: "CVE-2023-16777216",
   }}
 
   for _, test := range(failTests) {
