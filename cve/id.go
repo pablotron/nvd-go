@@ -2,13 +2,11 @@ package cve
 
 import (
   "fmt"
-  "strings"
-  "strconv"
 )
 
-// CVE identifier.
+// CVE identifier (ID).
 //
-// CVE identifiers are stored internally as an unsigned, 32-bit integer
+// CVE IDs are stored internally as an unsigned, 32-bit integer
 // by limiting the range of the year component of the CVE ID to the
 // range [1900, 2155] (inclusive) and the range of the number component
 // of the CVE ID to the range [0, 2**24] (inclusive).
@@ -17,7 +15,7 @@ type Id uint32
 // Name, minimum and maximum numeric value for each CVE ID component.
 var idComponents = [2]struct {
   name string
-  min, max uint64
+  min, max uint32
 } {
   { name: "year", min: 1900, max: 1900 + 255 },
   { name: "number", min: 0, max: (1 << 24) - 1 },
@@ -29,38 +27,19 @@ var minIdYear = uint32(idComponents[0].min)
 // Parse CVE identifier from string.  Returns error if the given
 // string could not be parsed as a CVE identifier.
 func ParseId(s string) (*Id, error) {
-  // split into component strings
-  vals := strings.Split(s, "-")
-
-  // check component count
-  if len(vals) != 3 {
-    return nil, fmt.Errorf("invalid CVE ID component count: %d != 3", len(vals))
-  }
-
-  // check for "CVE" prefix
-  if vals[0] != "CVE" {
-    return nil, fmt.Errorf("missing CVE prefix")
-  }
-
-  // parse numeric components
+  // parse string
   var ns [2]uint32
-  for i, val := range(vals[1:]) {
-    // get component data
-    c := idComponents[i]
+  if n, err := fmt.Sscanf(s, "CVE-%04d-%d", &ns[0], &ns[1]); err != nil {
+    return nil, err
+  } else if n != 2 {
+    return nil, fmt.Errorf("invalid component count: %d != 2", n)
+  }
 
-    // parse component string
-    n, err := strconv.ParseUint(val, 10, 32)
-    if err != nil {
-      return nil, fmt.Errorf("invalid %s \"%s\": %w", c.name, val, err)
+  // check component ranges
+  for i, c := range(idComponents) {
+    if ns[i] < c.min || ns[i] > c.max {
+      return nil, fmt.Errorf("%s out of range: %d != [%d, %d]", c.name, ns[i], c.min, c.max)
     }
-
-    // check numeric component range
-    if n < c.min || n > c.max {
-      return nil, fmt.Errorf("%s out of range: %d != [%d, %d]", c.name, n, c.min, c.max)
-    }
-
-    // add to results
-    ns[i] = uint32(n)
   }
 
   // encode result as u32
