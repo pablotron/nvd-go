@@ -1,6 +1,17 @@
 //go:build exclude
 //
-// gen.go: generate cvss vector code.
+// gen.go: generate CVSS vector code.
+//
+// Used to generate the following files:
+// - cvss/v2/vector.go
+// - cvss/v30/vector.go
+// - cvss/v31/vector.go
+//
+// Example:
+//
+//     # generate cvss/v2/vector.go
+//     go run cvss/gen-vector/gen.go v2 > cvss/v2/vector.go
+//
 package main
 
 import (
