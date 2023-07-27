@@ -47,6 +47,157 @@ type Version struct {
 
 // map of version ID to version metadata.
 var versions = map[string]Version {
+  "v2": Version {
+    ns: "v2", // namespace
+    version: "2", // version string
+
+    // enum definitions
+    defs: map[string]Enum {
+      "AccessVector": Enum {
+        "AV",
+        "AccessVector",
+        []Value {
+          { "N", "Network", "NETWORK" },
+          { "A", "AdjacentNetwork", "ADJACENT_NETWORK" },
+          { "L", "Local", "LOCAL" },
+        },
+      },
+
+      "AccessComplexity": Enum {
+        "AC",
+        "AccessComplexity",
+        []Value {
+          { "H", "High", "HIGH" },
+          { "M", "Medium", "MEDIUM" },
+          { "L", "Low", "LOW" },
+        },
+      },
+
+      "Authentication": Enum {
+        "Au",
+        "Authentication",
+        []Value {
+          { "M", "Multiple", "MULTIPLE" },
+          { "S", "Single", "SINGLE" },
+          { "N", "None", "NONE" },
+        },
+      },
+
+      "Impact": Enum {
+        "I",
+        "Impact",
+        []Value {
+          { "N", "None", "NONE" },
+          { "P", "Partial", "PARTIAL" },
+          { "C", "Complete", "COMPLETE" },
+        },
+      },
+
+      "Exploitability": Enum {
+        "E",
+        "Exploitability",
+        []Value {
+          { "U", "Unproven", "UNPROVEN" },
+          { "POC", "ProofOfConcept", "PROOF_OF_CONCEPT" },
+          { "F", "Functional", "FUNCTIONAL" },
+          { "H", "High", "HIGH" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "RemediationLevel": Enum {
+        "RL",
+        "RemediationLevel",
+        []Value {
+          { "OF", "OfficialFix", "OFFICIAL_FIX" },
+          { "TF", "TemporaryFix", "TEMPORARY_FIX" },
+          { "W", "Workaround", "WORKAROUND" },
+          { "U", "Unavailable", "UNAVAILABLE" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "ReportConfidence": Enum {
+        "RC",
+        "ReportConfidence",
+        []Value {
+          { "UC", "Unconfirmed", "UNCONFIRMED" },
+          { "UR", "Uncorroborated", "UNCORROBORATED" },
+          { "C", "Confirmed", "CONFIRMED" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "CollateralDamagePotential": Enum {
+        "CDP",
+        "CollateralDamagePotential",
+        []Value {
+          { "N", "None", "NONE" },
+          { "L", "Low", "LOW" },
+          { "LM", "LowMedium", "LOW_MEDIUM" },
+          { "MH", "MediumHigh", "MEDIUM_HIGH" },
+          { "H", "High", "HIGH" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "TargetDistribution": Enum {
+        "TD",
+        "TargetDistribution",
+        []Value {
+          { "N", "None", "NONE" },
+          { "L", "Low", "LOW" },
+          { "M", "Medium", "MEDIUM" },
+          { "H", "High", "HIGH" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+
+      "Requirement": Enum {
+        "R",
+        "Requirement",
+        []Value {
+          { "L", "Low", "LOW" },
+          { "M", "Medium", "MEDIUM" },
+          { "H", "High", "HIGH" },
+          { "ND", "NotDefined", "NOT_DEFINED" },
+        },
+      },
+    },
+
+    // Ordered list of enums
+    enums: []string {
+      "AccessVector",
+      "AccessComplexity",
+      "Authentication",
+      "Impact",
+      "Exploitability",
+      "RemediationLevel",
+      "ReportConfidence",
+      "CollateralDamagePotential",
+      "TargetDistribution",
+      "Requirement",
+    },
+
+    // metric keys
+    keys: []metricKey {
+      { "AV", "Access Vector", 0, 2, "AccessVector" },
+      { "AC", "Access Complexity", 2, 2, "AccessComplexity" },
+      { "Au", "Authentication", 4, 2, "Authentication" },
+      { "C", "Confidentiality Impact", 6, 2, "Impact" },
+      { "I", "Integrity Impact", 8, 2, "Impact" },
+      { "A", "Availability Impact", 10, 2, "Impact" },
+      { "E", "Exploitability", 12, 3, "Exploitability" },
+      { "RL", "Remediation Level", 15, 3, "RemediationLevel" },
+      { "RC", "Report Confidence", 18, 3, "ReportConfidence" },
+      { "CDP", "Collateral Damage Potential", 21, 3, "CollateralDamagePotential" },
+      { "TD", "Target Distribution", 24, 3, "TargetDistribution" },
+      { "CR", "Confidentiality Requirement", 27, 3, "Requirement" },
+      { "IR", "Integrity Requirement", 30, 3, "Requirement" },
+      { "AR", "Availability Requirement", 33, 3, "Requirement" },
+    },
+  },
+
   "v31": Version {
     ns: "v31", // namespace
     version: "3.1", // version string
