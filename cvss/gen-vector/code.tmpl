@@ -226,10 +226,12 @@ func ParseVector(s string) (Vector, error) {
     return Vector(0), fmt.Errorf("missing prefix: \"%s\"", s)
   }
 
+{{ if ne .Ns "v2" }}
   // check prefix
   if parts[0] != prefix {
     return Vector(0), fmt.Errorf("invalid prefix: \"%s\"", parts[0])
   }
+{{- end }}
 
   // parse metrics, build result
   r := uint64(0)
