@@ -194,7 +194,7 @@ const prefix = "CVSS:{{.Version}}"
 
 // Return vector as string
 func (v Vector) String() string {
-  r := []string { prefix }
+  r := []string { {{ if ne .Ns "v2" }}prefix{{ end }} }
 
   for _, m := range(v.Metrics()) {
     r = append(r, m.String())
@@ -226,16 +226,22 @@ func ParseVector(s string) (Vector, error) {
     return Vector(0), fmt.Errorf("missing prefix: \"%s\"", s)
   }
 
-{{ if ne .Ns "v2" }}
+{{ if eq .Ns "v2" }}
+  // v2 metrics have no prefix
+  metricParts := parts
+{{ else }}
   // check prefix
   if parts[0] != prefix {
     return Vector(0), fmt.Errorf("invalid prefix: \"%s\"", parts[0])
   }
+
+  // skip prefix
+  metricParts := parts[1:]
 {{- end }}
 
   // parse metrics, build result
   r := uint64(0)
-  for _, ms := range(parts[1:]) {
+  for _, ms := range(metricParts) {
     // parse metric string
     d, ok := metricStrs[ms]
     if !ok {
