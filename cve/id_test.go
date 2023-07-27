@@ -43,4 +43,40 @@ func TestParseId(t *testing.T) {
       }
     })
   }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {{
+    name: "empty",
+  }, {
+    name: "garbage",
+    val: "foo",
+  }, {
+    name: "invalid prefix",
+    val: "abc-2023-05",
+  }, {
+    name: "wrong prefix case",
+    val: "cve-2023-05",
+  }, {
+    name: "missing component",
+    val: "CVE-2023",
+  }, {
+    name: "low year",
+    val: "CVE-1899-0",
+  }, {
+    name: "high year",
+    val: "CVE-2156-0",
+  }, {
+    name: "high number",
+    val: "CVE-2156-16777216",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if got, err := ParseId(test.val); err == nil {
+        t.Fatalf("got %v, exp err", got)
+      }
+    })
+  }
 }
