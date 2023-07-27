@@ -802,14 +802,18 @@ func ParseVector(s string) (Vector, error) {
     return Vector(0), fmt.Errorf("missing prefix: \"%s\"", s)
   }
 
+
   // check prefix
   if parts[0] != prefix {
     return Vector(0), fmt.Errorf("invalid prefix: \"%s\"", parts[0])
   }
 
+  // skip prefix
+  metricParts := parts[1:]
+
   // parse metrics, build result
   r := uint64(0)
-  for _, ms := range(parts[1:]) {
+  for _, ms := range(metricParts) {
     // parse metric string
     d, ok := metricStrs[ms]
     if !ok {
