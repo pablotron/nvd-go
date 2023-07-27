@@ -46,9 +46,7 @@ func (v Version) ValidSeverity(s Severity) bool {
   switch v {
   case V2:
     return s == Low || s == Medium || s == High
-  case V30:
-    return s == Low || s == Medium || s == High || s == Critical
-  case V31:
+  case V30, V31:
     return s == Low || s == Medium || s == High || s == Critical
   default:
     return false
