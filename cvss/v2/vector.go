@@ -600,6 +600,7 @@ func ParseVector(s string) (Vector, error) {
   }
 
 
+  // v2 metrics have no prefix
   metricParts := parts
 
 
@@ -623,6 +624,15 @@ func ParseVector(s string) (Vector, error) {
 
   // return result
   return Vector(r), nil
+}
+
+// Parse string into CVSS v2 vector or panic on error.
+func MustParseVector(s string) Vector {
+  if v, err := ParseVector(s); err == nil {
+    return v
+  } else {
+    panic(err)
+  }
 }
 
 // Unmarshal vector from text.

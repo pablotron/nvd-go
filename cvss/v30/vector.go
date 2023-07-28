@@ -833,6 +833,15 @@ func ParseVector(s string) (Vector, error) {
   return Vector(r), nil
 }
 
+// Parse string into CVSS v3.0 vector or panic on error.
+func MustParseVector(s string) Vector {
+  if v, err := ParseVector(s); err == nil {
+    return v
+  } else {
+    panic(err)
+  }
+}
+
 // Unmarshal vector from text.
 func (v *Vector) UnmarshalText(b []byte) error {
   if nv, err := ParseVector(string(b)); err != nil {
