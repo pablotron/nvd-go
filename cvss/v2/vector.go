@@ -6,6 +6,7 @@
 package v2
 
 import (
+  "encoding/json"
   "fmt"
   "strings"
 )
@@ -643,4 +644,9 @@ func (v *Vector) UnmarshalText(b []byte) error {
     *v = nv
     return nil
   }
+}
+
+// Marshal vector as JSON string.
+func (v *Vector) MarshalJSON() ([]byte, error) {
+  return json.Marshal(v.String())
 }
