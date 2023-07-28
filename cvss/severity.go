@@ -20,28 +20,24 @@ const (
 
 // Parse string as CVSS severity.  Returns error if the given string is
 // not a valid CVSS severity string.
-func ParseSeverity(s string) (*Severity, error) {
+func ParseSeverity(s string) (Severity, error) {
   switch s {
   case "LOW":
-    r := Low
-    return &r, nil
+    return Low, nil
   case "MEDIUM":
-    r := Medium
-    return &r, nil
+    return Medium, nil
   case "HIGH":
-    r := High
-    return &r, nil
+    return High, nil
   case "CRITICAL":
-    r := Critical
-    return &r, nil
+    return Critical, nil
   default:
-    return nil, fmt.Errorf("invalid CVSS severity: \"%s\"", s)
+    return Unknown, fmt.Errorf("invalid CVSS severity: \"%s\"", s)
   }
 }
 
 // Parse string as CVSS severity or panic if the given string is not not
 // a valid CVSS severity string.
-func MustParseSeverity(s string) *Severity {
+func MustParseSeverity(s string) Severity {
   if severity, err := ParseSeverity(s); err == nil {
     return severity
   } else {
@@ -75,7 +71,7 @@ func (s *Severity) UnmarshalText(b []byte) error {
   }
 
   // save result, return success
-  *s = *ns
+  *s = ns
   return nil
 }
 
