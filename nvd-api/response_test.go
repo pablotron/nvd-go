@@ -8,6 +8,7 @@ import (
   "os"
 )
 
+// Read gzipped test data.
 func readTestData(t *testing.T, path string) []byte {
   t.Helper()
 
@@ -35,7 +36,7 @@ func readTestData(t *testing.T, path string) []byte {
   return data
 }
 
-func TestResponse(t *testing.T) {
+func TestResponseUnmarshalJson(t *testing.T) {
   passTests := []struct {
     name string // test name
     path string // test json file
@@ -45,6 +46,9 @@ func TestResponse(t *testing.T) {
   }, {
     name: "2023",
     path: "testdata/cves-response-2023.json.gz",
+  }, {
+    name: "CVE-2023-0001",
+    path: "testdata/response-CVE-2023-0001.json.gz",
   }}
 
   for _, test := range(passTests) {
@@ -56,6 +60,41 @@ func TestResponse(t *testing.T) {
       var r Response
       if err := json.Unmarshal(data, &r); err != nil {
         t.Fatal(err)
+      }
+    })
+  }
+}
+
+func TestResponseUnmarshalMarshal(t *testing.T) {
+  passTests := []struct {
+    name string // test name
+    path string // test json file
+  } {{
+    name: "CVE-2023-0001",
+    path: "testdata/response-CVE-2023-0001.json.gz",
+  }}
+
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      // read response data
+      data := readTestData(t, test.path)
+
+      // unmarshal response
+      var r Response
+      if err := json.Unmarshal(data, &r); err != nil {
+        t.Fatal(err)
+      }
+
+      // marshal response
+      gotBytes, err := json.Marshal(&r)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := string(data)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got %s, exp %s", got, exp)
       }
     })
   }
