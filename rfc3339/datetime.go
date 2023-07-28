@@ -54,25 +54,24 @@ func (t *DateTime) Time() (*time.Time, error) {
 // if the given time value is nil.
 func (t *DateTime) String() string {
   if t != nil {
-    return time.Time(*t).Format(time.RFC3339)
+    return time.Time(*t).Format(dateTimeLayout)
   } else {
     return ""
   }
 }
 
-func (t *DateTime) UnmarshalJSON(b []byte) error {
-  // unmarshal string
-  var s string
-  if err := json.Unmarshal(b, &s); err != nil {
-    return err
-  }
-
+// Unarshal time from text.
+func (t *DateTime) UnmarshalText(b []byte) error {
   // parse string as datetime
-  nt, err := ParseDateTime(s)
-  if err != nil {
+  if nt, err := ParseDateTime(string(b)); err != nil {
     return err
+  } else {
+    *t = *nt
+    return nil
   }
+}
 
-  *t = *nt
-  return nil
+// Marshal time as JSON-encoded string.
+func (t *DateTime) MarshalJSON() ([]byte, error) {
+  return json.Marshal(t.String())
 }
