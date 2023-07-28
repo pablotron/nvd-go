@@ -1,4 +1,4 @@
-package cvss2
+package v2
 
 import "fmt"
 
@@ -6,10 +6,10 @@ import "fmt"
 const versionStr = "2.0"
 
 // CVSS V2 version string.  Must be "2.0".
-type Version struct{}
+type VersionString struct{}
 
 // Unmarshal CVSS version 2.0 string from text.
-func (v *Version) UnmarshalText(text []byte) error {
+func (v *VersionString) UnmarshalText(text []byte) error {
   s := string(text)
   if s == versionStr {
     return nil
@@ -19,12 +19,12 @@ func (v *Version) UnmarshalText(text []byte) error {
 }
 
 // Marshal CVSS V2 version string to text.
-func (v *Version) MarshalText() ([]byte, error) {
+func (v *VersionString) MarshalText() ([]byte, error) {
   return []byte(versionStr), nil
 }
 
 // Convert CVSS V2 version string to string.
-func (v Version) String() string {
+func (v VersionString) String() string {
   return versionStr
 }
 
