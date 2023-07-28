@@ -1,6 +1,7 @@
 package cpe
 
 import (
+  "encoding/json"
   "fmt"
   "strings"
 )
@@ -62,4 +63,9 @@ func (m *Match) UnmarshalText(b []byte) error {
 
   *m = *nm
   return nil
+}
+
+// Marshal CPE match string as JSON string.
+func (m Match) MarshalJSON() ([]byte, error) {
+  return json.Marshal(m.String())
 }

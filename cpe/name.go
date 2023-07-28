@@ -1,6 +1,7 @@
 package cpe
 
 import (
+  "encoding/json"
   "fmt"
   "strings"
 )
@@ -55,4 +56,9 @@ func MustParseName(s string) *Name {
 // return Name as string
 func (n Name) String() string {
   return "cpe:2.3:" + strings.Join([]string(n), ":")
+}
+
+// Marshal CPE name as JSON string.
+func (n Name) MarshalJSON() ([]byte, error) {
+  return json.Marshal(n.String())
 }
