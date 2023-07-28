@@ -289,3 +289,36 @@ func TestParseVector(t *testing.T) {
     })
   }
 }
+
+func TestVectorString(t *testing.T) {
+  tests := []string {
+    "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+    "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:N/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+  }
+
+  for _, exp := range(tests) {
+    t.Run(exp, func(t *testing.T) {
+      // parse vector, get string
+      got := MustParseVector(exp).String()
+      if got != exp {
+        t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+}

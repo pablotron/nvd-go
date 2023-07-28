@@ -560,16 +560,12 @@ func TestVectorString(t *testing.T) {
     "CVSS:3.1/AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
   }
 
-  for _, test := range(tests) {
-    t.Run(test, func(t *testing.T) {
-      v, err := ParseVector(test)
-      if err != nil {
-        t.Fatal(err)
-      }
-
-      got := v.String()
-      if got != test {
-        t.Fatalf("got %s, exp %s", got, test)
+  for _, exp := range(tests) {
+    t.Run(exp, func(t *testing.T) {
+      // parse vector, get string
+      got := MustParseVector(exp).String()
+      if got != exp {
+        t.Fatalf("got %s, exp %s", got, exp)
       }
     })
   }
