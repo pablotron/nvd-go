@@ -17,9 +17,9 @@ type CveParams struct {
   CpeName *cpe.Name `url:"cpeName"`
   CveId *cve.Id `url:"cveId"`
   CvssV2Metrics string `url:"cvssV2Metrics"`
-  CvssV2Severity *cvss.Severity `url:"cvssV2Severity"`
+  CvssV2Severity cvss.Severity `url:"cvssV2Severity"`
   CvssV3Metrics string `url:"cvssV3Metrics"`
-  CvssV3Severity *cvss.Severity `url:"cvssV3Severity"`
+  CvssV3Severity cvss.Severity `url:"cvssV3Severity"`
   CweId *cwe.Id `url:"cweId"`
   HasCertAlerts bool `url:"hasCertAlerts"`
   HasCertNotes bool `url:"hasCertNotes"`
@@ -134,17 +134,17 @@ func (cp CveParams) Check() error {
   }
 
   // check for invalid v2 and v3 metrics combination
-  if cp.CvssV2Severity != nil && cp.CvssV3Severity != nil {
+  if cp.CvssV2Severity != cvss.Unknown && cp.CvssV3Severity != cvss.Unknown {
     return errCveParamsInvalidSeverityPair
   }
 
   // check for invalid cvss v2 severity
-  if cp.CvssV2Severity != nil && !cvss.V2.ValidSeverity(*cp.CvssV2Severity) {
+  if cp.CvssV2Severity != cvss.Unknown && !cvss.V2.ValidSeverity(cp.CvssV2Severity) {
     return errCveParamsInvalidV2Severity
   }
 
   // check for invalid cvss v3 severity
-  if cp.CvssV3Severity != nil && !cvss.V30.ValidSeverity(*cp.CvssV3Severity) {
+  if cp.CvssV3Severity != cvss.Unknown && !cvss.V30.ValidSeverity(cp.CvssV3Severity) {
     return errCveParamsInvalidV3Severity
   }
 

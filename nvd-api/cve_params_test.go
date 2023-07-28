@@ -46,7 +46,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV2Severity",
     val: CveParams {
-      CvssV2Severity: cvss.MustParseSeverity("LOW"),
+      CvssV2Severity: cvss.Low,
     },
     exp: "cvssV2Severity=LOW",
   }, {
@@ -58,7 +58,7 @@ func TestCveParamsQueryString(t *testing.T) {
   }, {
     name: "cvssV3Severity",
     val: CveParams {
-      CvssV3Severity: cvss.MustParseSeverity("HIGH"),
+      CvssV3Severity: cvss.High,
     },
     exp: "cvssV3Severity=HIGH",
   }, {
