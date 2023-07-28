@@ -1,6 +1,7 @@
 package cve
 
 import (
+  "encoding/json"
   "fmt"
 )
 
@@ -96,4 +97,9 @@ func (id *Id) UnmarshalText(b []byte) error {
 
   *id = *new_id
   return nil
+}
+
+// Marshal CVE ID as JSON string.
+func (id Id) MarshalJSON() ([]byte, error) {
+  return json.Marshal(id.String())
 }
