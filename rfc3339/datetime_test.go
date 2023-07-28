@@ -50,3 +50,25 @@ func TestParseDateTime(t *testing.T) {
     })
   }
 }
+
+func TestDateTimeString(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56.123",
+  }
+
+  for _, exp := range(passTests) {
+    t.Run(exp, func(t *testing.T) {
+      // parse time
+      dt, err := ParseDateTime(exp)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      // convert to string
+      got := dt.String()
+      if got != exp {
+        t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+}
