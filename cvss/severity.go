@@ -1,6 +1,9 @@
 package cvss
 
-import "fmt"
+import (
+  "encoding/json"
+  "fmt"
+)
 
 // CVSS severity level.  Used to represent both CVSS V2 and CVSS V3
 // severity levels.
@@ -74,4 +77,9 @@ func (s *Severity) UnmarshalText(b []byte) error {
   // save result, return success
   *s = *ns
   return nil
+}
+
+// Marshal severity as JSON string.
+func (s Severity) MarshalJSON() ([]byte, error) {
+  return json.Marshal(s.String())
 }
