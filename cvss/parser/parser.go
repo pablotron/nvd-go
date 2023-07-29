@@ -2,6 +2,7 @@
 package parser
 
 import (
+  "fmt"
   "pmdn.org/nvd-go/cvss"
   "pmdn.org/nvd-go/cvss/v2"
   "pmdn.org/nvd-go/cvss/v30"
@@ -16,9 +17,11 @@ func ParseVector(s string) (cvss.Vector, error) {
   } else if len(s) > 8 && s[0:9] == "CVSS:3.0/" {
     v, err := v30.ParseVector(s)
     return &v, err
-  } else {
+  } else if v2.ValidVectorString(s) {
     v, err := v2.ParseVector(s)
     return &v, err
+  } else {
+    return nil, fmt.Errorf("invalid CVSS vector string: \"%s\"", s)
   }
 }
 
