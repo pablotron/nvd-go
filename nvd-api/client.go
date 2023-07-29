@@ -3,8 +3,6 @@ package nvd_api
 import (
   "encoding/json"
   "fmt"
-  // "io"
-  "log"
   "net/http"
   net_url "net/url"
 )
@@ -49,7 +47,6 @@ func (c Client) send(endpoint, query string) (*Response, error) {
   url := *c.apiUrl
   url.Path = path
   url.RawQuery = query
-  log.Printf("url = %s", url.String())
 
   // create request
   req, err := http.NewRequest("GET", url.String(), nil)
@@ -71,14 +68,6 @@ func (c Client) send(endpoint, query string) (*Response, error) {
   }
   defer resp.Body.Close()
 
-  // read body
-  // body, err := io.ReadAll(resp.Body)
-  // if err != nil {
-  //   return nil, fmt.Errorf("ReadFull(): %w", err)
-  // }
-  // log.Printf("url = %s", url.String())
-  // log.Printf("body = %s", string(body))
-
   // read body, decode response
   var r Response
   if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
@@ -89,6 +78,7 @@ func (c Client) send(endpoint, query string) (*Response, error) {
   return &r, nil
 }
 
+// Search for CVEs via NVD API.
 func (c Client) Cves(params CveParams) (*Response, error) {
   // build query string from parameters
   queryString, err := params.QueryString()
@@ -99,7 +89,7 @@ func (c Client) Cves(params CveParams) (*Response, error) {
   // send request, get response
   r, err := c.send("cves/2.0", queryString)
 
-  // TODO: check response
+  // TODO: check response format and version
 
   // return response
   return r, nil
