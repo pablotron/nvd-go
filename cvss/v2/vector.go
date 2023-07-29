@@ -8,7 +8,10 @@ package v2
 import (
   "encoding/json"
   "fmt"
+  "pmdn.org/nvd-go/cvss"
+  "regexp"
   "strings"
+
 )
 
 // packed strings
@@ -649,4 +652,17 @@ func (v *Vector) UnmarshalText(b []byte) error {
 // Marshal vector as JSON string.
 func (v *Vector) MarshalJSON() ([]byte, error) {
   return json.Marshal(v.String())
+}
+
+// Get vector version.
+func (v Vector) Version() cvss.Version {
+  return cvss.V2
+}
+
+// vector string regex (from JSON schema)
+var matchPattern = regexp.MustCompile("^((AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))/)*(AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))$")
+
+// Returns true if the given string is a valid CVSS v2 string.
+func ValidVectorString(s string) bool {
+  return matchPattern.MatchString(s)
 }
