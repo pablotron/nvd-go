@@ -40,6 +40,8 @@ type metricKey struct {
 type TemplateParams struct {
   Ns string // namespace
   Version string // version string
+  VersionConst string // version constant (e.g. "V2", "V30", "V31", etc)
+  Pattern string
   Pack string // packed string
   Offsets map[string]int // map of string to byte offset in packed string
   Defs map[string]Enum // enum definitions
@@ -51,6 +53,8 @@ type TemplateParams struct {
 type Version struct {
   ns string // output namespace
   version string // version string
+  versionConst string // version constant (e.g., V2, V30, V31)
+  pattern string // vector pattern
   defs map[string]Enum // enum definitions
   enums []string // ordered list of enums
   keys []metricKey // metric keys
@@ -61,6 +65,9 @@ var versions = map[string]Version {
   "v2": Version {
     ns: "v2", // namespace
     version: "2", // version string
+    versionConst: "V2", // version constant
+
+    pattern: "^((AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))/)*(AV:[NAL]|AC:[LMH]|Au:[MSN]|[CIA]:[NPC]|E:(U|POC|F|H|ND)|RL:(OF|TF|W|U|ND)|RC:(UC|UR|C|ND)|CDP:(N|L|LM|MH|H|ND)|TD:(N|L|M|H|ND)|[CIA]R:(L|M|H|ND))$",
 
     // enum definitions
     defs: map[string]Enum {
@@ -212,6 +219,9 @@ var versions = map[string]Version {
   "v30": Version {
     ns: "v30", // namespace
     version: "3.0", // version string
+    versionConst: "V30", // version constant
+
+    pattern: "^CVSS:3[.]0/((AV:[NALP]|AC:[LH]|PR:[UNLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XUNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])/)*(AV:[NALP]|AC:[LH]|PR:[UNLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XUNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])$",
 
     // enum definitions
     defs: map[string]Enum {
@@ -436,6 +446,9 @@ var versions = map[string]Version {
   "v31": Version {
     ns: "v31", // namespace
     version: "3.1", // version string
+    versionConst: "V31", // version constant
+
+    pattern: "^CVSS:3[.]1/((AV:[NALP]|AC:[LH]|PR:[NLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])/)*(AV:[NALP]|AC:[LH]|PR:[NLH]|UI:[NR]|S:[UC]|[CIA]:[NLH]|E:[XUPFH]|RL:[XOTWU]|RC:[XURC]|[CIA]R:[XLMH]|MAV:[XNALP]|MAC:[XLH]|MPR:[XNLH]|MUI:[XNR]|MS:[XUC]|M[CIA]:[XNLH])$",
 
     // enum definitions
     defs: map[string]Enum {
@@ -743,6 +756,8 @@ func (v Version) Params() TemplateParams {
   return TemplateParams {
     Ns: v.ns,
     Version: v.version,
+    VersionConst: v.versionConst,
+    Pattern: v.pattern,
     Pack: pack,
     Offsets: offsets,
     Defs: v.defs,
