@@ -9,5 +9,5 @@ import (
 var DefaultUrl = net_url.URL {
   Scheme: "https",
   Host: "services.nvd.nist.gov",
-  Path: "/rest/json/cves/2.0",
+  Path: "/rest/json",
 }
