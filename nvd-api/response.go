@@ -10,5 +10,6 @@ type Response struct {
   Format string `json:"format"`
   Version string `json:"version"`
   Timestamp *rfc3339.DateTime `json:"timestamp"`
-  Vulnerabilities *[]Vulnerability `json:"vulnerabilities"`
+  Vulnerabilities []Vulnerability `json:"vulnerabilities,omitempty"`
+  CveChanges []CveChange `json:"cveChanges,omitempty"`
 }
