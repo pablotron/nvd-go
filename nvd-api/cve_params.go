@@ -86,44 +86,8 @@ var errCveParamsMissingVersionStartType = errors.New("versionStart without versi
 // versionStart.
 var errCveParamsMissingVersionStart = errors.New("versionStartType without versionStart")
 
-// maximum value for ResultsPerPage parameter.
-const maxResultsPerPage = 2000
-
-// maximum number of days for date ranges
-const maxDateRangeDays = 120.0
-
-func checkDateRange(name string, start, end *rfc3339.Time) error {
-  if start == nil && end == nil {
-    return nil
-  } else if start != nil && end == nil {
-    return fmt.Errorf("missing %sEndDate", name)
-  } else if start == nil && end != nil {
-    return fmt.Errorf("missing %sStartDate", name)
-  }
-
-  // convert start to time.Time
-  startTime, err := start.Time()
-  if err != nil {
-    return fmt.Errorf("invalid %sStartDate: %w", name, err)
-  }
-
-  // convert end to time.Time
-  endTime, err := end.Time()
-  if err != nil {
-    return fmt.Errorf("invalid %sEndDate: %w", name, err)
-  }
-
-  // get duration between start and end (in days)
-  days := endTime.Sub(*startTime).Hours() * 24.0
-
-  // check for valid date range duration
-  if days < 0.0 || days > maxDateRangeDays {
-    return fmt.Errorf("%s date range duration out of range: %f", name, days)
-  }
-
-  // return success
-  return nil
-}
+// maximum value for CveParams ResultsPerPage parameter.
+const cveParamsMaxResultsPerPage = 2000
 
 // Check CVE parameters for validity.
 func (cp CveParams) Check() error {
@@ -148,8 +112,8 @@ func (cp CveParams) Check() error {
   }
 
   // check results per page
-  if cp.ResultsPerPage > maxResultsPerPage {
-    return fmt.Errorf("results per page out of bounds: %d > %d", cp.ResultsPerPage, maxResultsPerPage)
+  if cp.ResultsPerPage > cveParamsMaxResultsPerPage {
+    return fmt.Errorf("results per page out of bounds: %d > %d", cp.ResultsPerPage, cveParamsMaxResultsPerPage)
   }
 
   // if isVulnerable is provided, cpeName is required
