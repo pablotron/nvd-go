@@ -52,6 +52,9 @@ func TestResponseUnmarshalJson(t *testing.T) {
   }, {
     name: "cvehistory-response-CVE-2019-1010218",
     path: "testdata/cvehistory-response-CVE-2019-1010218.json.gz",
+  }, {
+    name: "cpematch-response-CVE-2022-32223.json.gz",
+    path: "testdata/cpematch-response-CVE-2022-32223.json.gz",
   }}
 
   for _, test := range(passTests) {
