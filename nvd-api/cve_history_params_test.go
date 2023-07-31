@@ -72,6 +72,7 @@ func TestCveHistoryParamsCheck(t *testing.T) {
     },
   }}
 
+  // run fail tests
   for _, test := range(failTests) {
     t.Run(test.name, func(t *testing.T) {
       if err := test.val.Check(); err == nil {
