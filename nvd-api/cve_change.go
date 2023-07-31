@@ -13,11 +13,11 @@ type CveChange struct {
     CveChangeId uuid.UUID `json:"cveChangeId"`
     SourceIdentifier *string `json:"sourceIdentifier"`
     Created rfc3339.DateTime `json:"created"`
-    Details struct {
+    Details []struct {
       Action string `json:"action"` // TODO: enum Added/Changed/Removed
       Type string `json:"type"`
       OldValue string `json:"oldValue"`
-      NewValue string `json:"NewValue"`
+      NewValue string `json:"newValue"`
     } `json:"details"`
   } `json:"change"`
 }
