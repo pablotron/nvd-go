@@ -58,16 +58,16 @@ var errCveParamsInvalidV2Severity = errors.New("invalid CVSS V2 severity")
 // valid CVSS V3 severity.
 var errCveParamsInvalidV3Severity = errors.New("invalid CVSS V3 severity")
 
-// Error returned by Check() if IsVulernable is set without
+// Error returned by Check() if IsVulnerable is set without
 // providing a CpeName.
 var errCveParamsIsVulnerableWithoutCpeName = errors.New("isVulnerable without cpeName")
 
-// Error returned by Check() if both IsVulernable and VirtualMatchString
+// Error returned by Check() if both IsVulnerable and VirtualMatchString
 // are set.
 var errCveParamsIsVulnerableWithVirtualMatchString = errors.New("isVulnerable with virtualMatchString")
 
-// Error returned by Check() if IsVulernable is set without
-// providing a CpeName.
+// Error returned by Check() if KeywordExactMatch is set without
+// providing a KeywordSearch value.
 var errCveParamsKeywordExactMatch = errors.New("keywordExactMatch without keywordSearch")
 
 // Error returned by Check() if versionEnd is set without
@@ -126,7 +126,7 @@ func (cp CveParams) Check() error {
     return errCveParamsIsVulnerableWithVirtualMatchString
   }
 
-  // check for both isVulnerable and virtualMatchString
+  // check for keywordExactMatch w/o keywordSearch
   if cp.KeywordExactMatch && cp.KeywordSearch == "" {
     return errCveParamsKeywordExactMatch
   }
