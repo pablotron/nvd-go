@@ -44,7 +44,8 @@ func TestResponseUnmarshalJson(t *testing.T) {
     "cves-CVE-2023-0001.json.gz",
     "cvehistory-CVE-2019-1010218.json.gz",
     "cpematch-CVE-2022-32223.json.gz",
-    // TODO: cpes, sources
+    "sources-20.json.gz",
+    // TODO: cpes
   }
 
   for _, test := range(passTests) {

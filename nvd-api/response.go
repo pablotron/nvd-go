@@ -16,4 +16,5 @@ type Response struct {
   CveChanges []CveChange `json:"cveChanges,omitempty"`
   Products []Product `json:"products,omitempty"`
   MatchStrings []MatchString `json:"matchStrings"`
+  Sources []Source `json:"sources"`
 }
