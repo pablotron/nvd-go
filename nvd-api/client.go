@@ -106,3 +106,9 @@ func (c Client) Cpes(params CpeParams) (*Response, error) {
   // send request, return response
   return c.send("cpes/2.0", &params, Cpe)
 }
+
+// Search for CPE matches via NVD API.
+func (c Client) CpeMatches(params CpeMatchParams) (*Response, error) {
+  // send request, return response
+  return c.send("cpematch/2.0", &params, CpeMatch)
+}
