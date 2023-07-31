@@ -43,6 +43,7 @@ func TestResponseUnmarshalJson(t *testing.T) {
     "cves-2023.json.gz",
     "cves-CVE-2023-0001.json.gz",
     "cvehistory-CVE-2019-1010218.json.gz",
+    "cpes-2023.json.gz",
     "cpematch-CVE-2022-32223.json.gz",
     "sources-20.json.gz",
     // TODO: cpes
