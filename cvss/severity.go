@@ -1,7 +1,6 @@
 package cvss
 
 import (
-  "encoding/json"
   "fmt"
 )
 
@@ -18,19 +17,21 @@ const (
   Critical // Critical severity
 )
 
+// Map of strings to severities.  Used by `ParseSeverity()`.
+var severityStrMap = map[string]Severity {
+  "NONE": None,
+  "LOW": Low,
+  "MEDIUM": Medium,
+  "HIGH": High,
+  "CRITICAL": Critical,
+}
+
 // Parse string as CVSS severity.  Returns error if the given string is
 // not a valid CVSS severity string.
 func ParseSeverity(s string) (Severity, error) {
-  switch s {
-  case "LOW":
-    return Low, nil
-  case "MEDIUM":
-    return Medium, nil
-  case "HIGH":
-    return High, nil
-  case "CRITICAL":
-    return Critical, nil
-  default:
+  if v, ok := severityStrMap[s]; ok {
+    return v, nil
+  } else {
     return Unknown, fmt.Errorf("invalid CVSS severity: \"%s\"", s)
   }
 }
@@ -45,19 +46,22 @@ func MustParseSeverity(s string) Severity {
   }
 }
 
+// Severity to string.  Used by `String()`.
+var severityStrs = [...]string {
+  "",
+  "NONE",
+  "LOW",
+  "MEDIUM",
+  "HIGH",
+  "CRITICAL",
+}
+
 // Convert CVSS severity to string.  Returns "" if the given CVSS
 // severity is invalid.
 func (s Severity) String() string {
-  switch s {
-  case Low:
-    return "LOW"
-  case Medium:
-    return "MEDIUM"
-  case High:
-    return "HIGH"
-  case Critical:
-    return "CRITICAL"
-  default:
+  if int(s) < len(severityStrs) {
+    return severityStrs[int(s)]
+  } else {
     return ""
   }
 }
@@ -75,7 +79,7 @@ func (s *Severity) UnmarshalText(b []byte) error {
   return nil
 }
 
-// Marshal severity as JSON string.
-func (s Severity) MarshalJSON() ([]byte, error) {
-  return json.Marshal(s.String())
+// Marshal severity as text.
+func (s Severity) MarshalText() ([]byte, error) {
+  return []byte(s.String()), nil
 }
