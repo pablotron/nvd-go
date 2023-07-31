@@ -91,7 +91,7 @@ func (c Client) Cves(params CveParams) (*Response, error) {
     return nil, fmt.Errorf("QueryString(): %w", err)
   }
 
-  // send request, get response
+  // send request, return response
   return c.send("cves/2.0", queryString, Cve)
 }
 
@@ -103,6 +103,18 @@ func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
     return nil, fmt.Errorf("QueryString(): %w", err)
   }
 
-  // send request, get response
+  // send request, return response
   return c.send("cvehistory/2.0", queryString, CveHistory)
+}
+
+// Search for CPEs via NVD API.
+func (c Client) Cpes(params CpeParams) (*Response, error) {
+  // build query string from parameters
+  queryString, err := params.QueryString()
+  if err != nil {
+    return nil, fmt.Errorf("QueryString(): %w", err)
+  }
+
+  // send request, return response
+  return c.send("cpes/2.0", queryString, Cpe)
 }
