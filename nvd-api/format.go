@@ -51,3 +51,8 @@ func (f Format) String() string {
     return ""
   }
 }
+
+// Convert format to string.
+func (f Format) MarshalText() ([]byte, error) {
+  return []byte(f.String()), nil
+}
