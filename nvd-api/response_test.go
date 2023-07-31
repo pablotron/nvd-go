@@ -3,6 +3,7 @@ package nvd_api
 import (
   "compress/gzip"
   "encoding/json"
+  "fmt"
   "io"
   "testing"
   "os"
@@ -37,30 +38,19 @@ func readTestData(t *testing.T, path string) []byte {
 }
 
 func TestResponseUnmarshalJson(t *testing.T) {
-  passTests := []struct {
-    name string // test name
-    path string // test json file
-  } {{
-    name: "1999",
-    path: "testdata/cves-response-1999.json.gz",
-  }, {
-    name: "2023",
-    path: "testdata/cves-response-2023.json.gz",
-  }, {
-    name: "CVE-2023-0001",
-    path: "testdata/response-CVE-2023-0001.json.gz",
-  }, {
-    name: "cvehistory-response-CVE-2019-1010218",
-    path: "testdata/cvehistory-response-CVE-2019-1010218.json.gz",
-  }, {
-    name: "cpematch-response-CVE-2022-32223.json.gz",
-    path: "testdata/cpematch-response-CVE-2022-32223.json.gz",
-  }}
+  passTests := []string {
+    "cves-1999.json.gz",
+    "cves-2023.json.gz",
+    "cves-CVE-2023-0001.json.gz",
+    "cvehistory-CVE-2019-1010218.json.gz",
+    "cpematch-CVE-2022-32223.json.gz",
+    // TODO: cpes, sources
+  }
 
   for _, test := range(passTests) {
-    t.Run(test.name, func(t *testing.T) {
-      // read response data
-      data := readTestData(t, test.path)
+    t.Run(test, func(t *testing.T) {
+      // build path, read response data
+      data := readTestData(t, fmt.Sprintf("testdata/responses/%s", test))
 
       // unmarshal response
       var r Response
