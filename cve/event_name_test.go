@@ -12,7 +12,7 @@ func TestEventNameString(t *testing.T) {
   } {
     { "None", None, "" },
     { "InitialAnalysis", InitialAnalysis, "Initial Analysis" },
-    { "Reanalysis", Reanalysis, "Renalysis" },
+    { "Reanalysis", Reanalysis, "Reanalysis" },
     { "CveModified", CveModified, "CVE Modified" },
     { "ModifiedAnalysis", ModifiedAnalysis, "Modified Analysis" },
     { "CveTranslated", CveTranslated, "CVE Translated" },
