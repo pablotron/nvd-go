@@ -9,11 +9,11 @@ func TestFormatUnmarshalText(t *testing.T) {
     val string // test value
     exp Format // expected format
   } {
-    { "NVD_CVE", Cve },
-    { "NVD_CVEHistory", CveHistory },
-    { "NVD_CPE", Cpe },
-    { "NVD_CPEMatchString", CpeMatch },
-    { "NVD_SOURCE", Source },
+    { "NVD_CVE", FormatCve },
+    { "NVD_CVEHistory", FormatCveHistory },
+    { "NVD_CPE", FormatCpe },
+    { "NVD_CPEMatchString", FormatCpeMatch },
+    { "NVD_SOURCE", FormatSource },
   }
 
   for _, test := range(passTests) {
@@ -48,12 +48,12 @@ func TestFormatString(t *testing.T) {
     val Format // test value
     exp string // expected string
   } {
-    { "Cve", Cve, "NVD_CVE" },
-    { "CveHistory", CveHistory, "NVD_CVEHistory" },
-    { "Cpe", Cpe, "NVD_CPE" },
-    { "CpeMatch", CpeMatch, "NVD_CPEMatchString" },
-    { "Source", Source, "NVD_SOURCE" },
-    { "UnknownFormat", UnknownFormat, "" },
+    { "Cve", FormatCve, "NVD_CVE" },
+    { "CveHistory", FormatCveHistory, "NVD_CVEHistory" },
+    { "Cpe", FormatCpe, "NVD_CPE" },
+    { "CpeMatch", FormatCpeMatch, "NVD_CPEMatchString" },
+    { "Source", FormatSource, "NVD_SOURCE" },
+    { "UnknownFormat", FormatUnknown, "" },
     { "Format(255)", Format(255), "" },
   }
 

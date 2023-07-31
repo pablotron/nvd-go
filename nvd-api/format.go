@@ -5,21 +5,21 @@ import "fmt"
 type Format uint8
 
 const (
-  UnknownFormat Format = iota
-  Cve
-  CveHistory
-  Cpe
-  CpeMatch
-  Source
+  FormatUnknown Format = iota
+  FormatCve
+  FormatCveHistory
+  FormatCpe
+  FormatCpeMatch
+  FormatSource
 )
 
 // string to format map
 var formatMap = map[string]Format {
-  "NVD_CVE": Cve,
-  "NVD_CVEHistory": CveHistory,
-  "NVD_CPE": Cpe,
-  "NVD_CPEMatchString": CpeMatch,
-  "NVD_SOURCE": Source,
+  "NVD_CVE": FormatCve,
+  "NVD_CVEHistory": FormatCveHistory,
+  "NVD_CPE": FormatCpe,
+  "NVD_CPEMatchString": FormatCpeMatch,
+  "NVD_SOURCE": FormatSource,
 }
 
 // Unmarshal byte slice as format.

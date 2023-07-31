@@ -92,23 +92,23 @@ func (c Client) send(endpoint string, params QueryStringer, format Format) (*Res
 // Search for CVEs via NVD API.
 func (c Client) Cves(params CveParams) (*Response, error) {
   // send request, return response
-  return c.send("cves/2.0", &params, Cve)
+  return c.send("cves/2.0", &params, FormatCve)
 }
 
 // Search for CVE changes via NVD API.
 func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
   // send request, return response
-  return c.send("cvehistory/2.0", &params, CveHistory)
+  return c.send("cvehistory/2.0", &params, FormatCveHistory)
 }
 
 // Search for CPEs via NVD API.
 func (c Client) Cpes(params CpeParams) (*Response, error) {
   // send request, return response
-  return c.send("cpes/2.0", &params, Cpe)
+  return c.send("cpes/2.0", &params, FormatCpe)
 }
 
 // Search for CPE matches via NVD API.
 func (c Client) CpeMatches(params CpeMatchParams) (*Response, error) {
   // send request, return response
-  return c.send("cpematch/2.0", &params, CpeMatch)
+  return c.send("cpematch/2.0", &params, FormatCpeMatch)
 }
