@@ -5,6 +5,47 @@ import (
   "testing"
 )
 
+func TestParseVersion(t *testing.T) {
+  passTests := []struct {
+    val string // test value
+    exp Version // expected version
+  } {
+    { "2.0", V2 },
+    { "3.0", V30 },
+    { "3.1", V31 },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.val, func(t *testing.T) {
+      got, err := ParseVersion(test.val)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      if *got != test.exp {
+        t.Fatalf("got %v, exp %v", got, test.exp)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "asdf" },
+    { "not supported", "4.0" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if got, err := ParseVersion(test.val); err == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
 func TestValidSeverity(t *testing.T) {
   tests := []struct {
     version Version
