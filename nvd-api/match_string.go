@@ -19,7 +19,7 @@ type MatchString struct {
     CpeLastModified rfc3339.DateTime `json:"cpeLastModified"`
     Status string `json:"string"`
     Matches []struct {
-      CpeName cpe.Name `json:"cpeName"`
+      CpeName cpe.Match `json:"cpeName"`
       CpeNameId uuid.UUID `json:"cpeNameId"`
     } `json:"matches"`
   } `json:"matchString"`
