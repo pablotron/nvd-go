@@ -41,7 +41,7 @@ func checkDateRange(name string, start, end *rfc3339.Time) error {
   }
 
   // get duration between start and end (in days)
-  days := endTime.Sub(*startTime).Hours() * 24.0
+  days := endTime.Sub(*startTime).Hours() / 24.0
 
   // check for valid date range duration
   if days < 0.0 || days > maxDateRangeDays {
