@@ -112,3 +112,9 @@ func (c Client) CpeMatches(params CpeMatchParams) (*Response, error) {
   // send request, return response
   return c.send("cpematch/2.0", &params, FormatCpeMatch)
 }
+
+// Search for sources via NVD API.
+func (c Client) Sources(params SourceParams) (*Response, error) {
+  // send request, return response
+  return c.send("source/2.0", &params, FormatSource)
+}
