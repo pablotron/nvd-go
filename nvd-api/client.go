@@ -36,7 +36,7 @@ func NewClient(apiKey string) Client {
 }
 
 // Send API request.
-func (c Client) send(endpoint, query string) (*Response, error) {
+func (c Client) send(endpoint, query string, format Format) (*Response, error) {
   // build full URL path
   path, err := net_url.JoinPath(c.apiUrl.Path, endpoint)
   if err != nil {
@@ -74,6 +74,11 @@ func (c Client) send(endpoint, query string) (*Response, error) {
     return nil, fmt.Errorf("Decode(): %w", err)
   }
 
+  // check format
+  if r.Format != format {
+    return nil, fmt.Errorf("invalid response format: %s", r.Format)
+  }
+
   // return response
   return &r, nil
 }
@@ -87,15 +92,7 @@ func (c Client) Cves(params CveParams) (*Response, error) {
   }
 
   // send request, get response
-  r, err := c.send("cves/2.0", queryString)
-
-  // check response format
-  if r.Format != Cve {
-    return nil, fmt.Errorf("invalid response format: %s", r.Format)
-  }
-
-  // return response
-  return r, nil
+  return c.send("cves/2.0", queryString, Cve)
 }
 
 // Search for CVE changes via NVD API.
@@ -107,13 +104,5 @@ func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
   }
 
   // send request, get response
-  r, err := c.send("cvehistory/2.0", queryString)
-
-  // check response format
-  if r.Format != CveHistory {
-    return nil, fmt.Errorf("invalid response format: %s", r.Format)
-  }
-
-  // return response
-  return r, nil
+  return c.send("cvehistory/2.0", queryString, CveHistory)
 }
