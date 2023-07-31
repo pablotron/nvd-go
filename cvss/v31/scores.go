@@ -230,7 +230,7 @@ func (v Vector) Scores() (cvss.Scores, error) {
   modInteg := getModCoef(keys, MI, I)
   modAvail := getModCoef(keys, MA, A)
 
-  if m, _ := keys[MS]; m == MS_X {
+  if m := keys[MS]; m == MS_X {
     // default to base scopeChanged
     modScopeChanged = scopeChanged
   }
@@ -239,9 +239,9 @@ func (v Vector) Scores() (cvss.Scores, error) {
   // (CVSS v3.1 spec, section 7.4, table 16)
   modPrivsRequired := 0.0
   {
-    mpr, _ := keys[MPR]
-    pr, _ := keys[PR]
-    ms, _ := keys[MS]
+    mpr := keys[MPR]
+    pr := keys[PR]
+    ms := keys[MS]
 
     if mpr != MPR_X && ms != MS_X {
       modPrivsRequired = privReqCoefs[mpr][ms == MS_C]

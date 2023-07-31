@@ -518,9 +518,6 @@ func (v Vector) Metrics() []Metric {
   return r
 }
 
-// CVSS v2 vector prefix
-const prefix = "CVSS:2"
-
 // Return vector as string
 func (v Vector) String() string {
   r := []string {  }
