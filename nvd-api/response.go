@@ -4,10 +4,10 @@ import "pmdn.org/nvd-go/rfc3339"
 
 // NVD API response.
 type Response struct {
-  ResultsPerPage int `json:"resultsPerPage"`
-  StartIndex int `json:"startIndex"`
-  TotalResults int `json:"totalResults"`
-  Format string `json:"format"`
+  ResultsPerPage uint `json:"resultsPerPage"`
+  StartIndex uint `json:"startIndex"`
+  TotalResults uint `json:"totalResults"`
+  Format Format `json:"format"`
   Version VersionString `json:"version"`
   Timestamp *rfc3339.DateTime `json:"timestamp"`
   Vulnerabilities []Vulnerability `json:"vulnerabilities,omitempty"`
