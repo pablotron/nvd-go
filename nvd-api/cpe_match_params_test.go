@@ -2,6 +2,7 @@ package nvd_api
 
 import (
   "github.com/google/uuid"
+  "pmdn.org/nvd-go/cpe"
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/rfc3339"
   "testing"
@@ -29,6 +30,11 @@ func TestCpeMatchParamsCheck(t *testing.T) {
     name: "matchCriteriaId",
     val: CpeMatchParams {
       MatchCriteriaId: uuid.MustParse("87316812-5F2C-4286-94FE-CC98B9EAEF53"),
+    },
+  }, {
+    name: "matchStringSearch",
+    val: CpeMatchParams {
+      MatchStringSearch: cpe.MustParseMatch("cpe:2.3:*:cisco:adaptive_security_appliance:*"),
     },
   }, {
     name: "resultsPerPage",
@@ -116,6 +122,12 @@ func TestCpeMatchParamsQueryString(t *testing.T) {
       MatchCriteriaId: uuid.MustParse("87316812-5F2C-4286-94FE-CC98B9EAEF53"),
     },
     exp: "matchCriteriaId=87316812-5f2c-4286-94fe-cc98b9eaef53",
+  }, {
+    name: "matchStringSearch",
+    val: CpeMatchParams {
+      MatchStringSearch: cpe.MustParseMatch("cpe:2.3:*:cisco:adaptive_security_appliance:*"),
+    },
+    exp: "matchStringSearch=cpe%3A2.3%3A%2A%3Acisco%3Aadaptive_security_appliance%3A%2A",
   }, {
     name: "resultsPerPage",
     val: CpeMatchParams {

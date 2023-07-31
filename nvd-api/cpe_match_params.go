@@ -3,6 +3,7 @@ package nvd_api
 import (
   "fmt"
   "github.com/google/uuid"
+  "pmdn.org/nvd-go/cpe"
   "pmdn.org/nvd-go/cve"
   "pmdn.org/nvd-go/rfc3339"
   "pmdn.org/nvd-go/url-params"
@@ -14,6 +15,7 @@ type CpeMatchParams struct {
   LastModStartDate *rfc3339.Time `url:"lastModStartDate"`
   LastModEndDate *rfc3339.Time `url:"lastModEndDate"`
   MatchCriteriaId uuid.UUID `url:"matchCriteriaId"`
+  MatchStringSearch *cpe.Match `url:"matchStringSearch"`
   ResultsPerPage uint `url:"resultsPerPage"`
   StartIndex uint `url:"startIndex"`
 }
