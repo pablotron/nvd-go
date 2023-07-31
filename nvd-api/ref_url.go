@@ -1,7 +1,6 @@
 package nvd_api
 
 import (
-  "encoding/json"
   "fmt"
   "regexp"
 )
@@ -31,24 +30,18 @@ func MustParseRefUrl(s string) *RefUrl {
   }
 }
 
+// Convert reference URL to string.
 func (r RefUrl) String() string {
   return string(r)
 }
 
-func (r *RefUrl) UnmarshalJSON(b []byte) error {
-  // unmarshal string
-  var s string
-  if err := json.Unmarshal(b, &s); err != nil {
-    return err
-  }
-
+// Unmarshal text as reference URL.
+func (r *RefUrl) UnmarshalText(b []byte) error {
   // parse string
-  nr, err := ParseRefUrl(s)
-  if err != nil {
+  if nr, err := ParseRefUrl(string(b)); err == nil {
+    *r = *nr
+    return nil
+  } else {
     return err
   }
-
-  // save result, return success
-  *r = *nr
-  return nil
 }
