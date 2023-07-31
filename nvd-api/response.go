@@ -8,7 +8,7 @@ type Response struct {
   StartIndex int `json:"startIndex"`
   TotalResults int `json:"totalResults"`
   Format string `json:"format"`
-  Version string `json:"version"`
+  Version VersionString `json:"version"`
   Timestamp *rfc3339.DateTime `json:"timestamp"`
   Vulnerabilities []Vulnerability `json:"vulnerabilities,omitempty"`
   CveChanges []CveChange `json:"cveChanges,omitempty"`
