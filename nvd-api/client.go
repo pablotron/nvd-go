@@ -36,7 +36,13 @@ func NewClient(apiKey string) Client {
 }
 
 // Send API request.
-func (c Client) send(endpoint, query string, format Format) (*Response, error) {
+func (c Client) send(endpoint string, params QueryStringer, format Format) (*Response, error) {
+  // build query string from parameters
+  query, err := params.QueryString()
+  if err != nil {
+    return nil, fmt.Errorf("QueryString(): %w", err)
+  }
+
   // build full URL path
   path, err := net_url.JoinPath(c.apiUrl.Path, endpoint)
   if err != nil {
@@ -85,36 +91,18 @@ func (c Client) send(endpoint, query string, format Format) (*Response, error) {
 
 // Search for CVEs via NVD API.
 func (c Client) Cves(params CveParams) (*Response, error) {
-  // build query string from parameters
-  queryString, err := params.QueryString()
-  if err != nil {
-    return nil, fmt.Errorf("QueryString(): %w", err)
-  }
-
   // send request, return response
-  return c.send("cves/2.0", queryString, Cve)
+  return c.send("cves/2.0", &params, Cve)
 }
 
 // Search for CVE changes via NVD API.
 func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
-  // build query string from parameters
-  queryString, err := params.QueryString()
-  if err != nil {
-    return nil, fmt.Errorf("QueryString(): %w", err)
-  }
-
   // send request, return response
-  return c.send("cvehistory/2.0", queryString, CveHistory)
+  return c.send("cvehistory/2.0", &params, CveHistory)
 }
 
 // Search for CPEs via NVD API.
 func (c Client) Cpes(params CpeParams) (*Response, error) {
-  // build query string from parameters
-  queryString, err := params.QueryString()
-  if err != nil {
-    return nil, fmt.Errorf("QueryString(): %w", err)
-  }
-
   // send request, return response
-  return c.send("cpes/2.0", queryString, Cpe)
+  return c.send("cpes/2.0", &params, Cpe)
 }
