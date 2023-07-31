@@ -9,7 +9,7 @@ import (
 type Product struct {
   Cpe struct {
     Deprecated bool `json:"deprecated"`
-    CpeName cpe.Match `json:"cpeName"`
+    CpeName cpe.Name `json:"cpeName"`
     CpeNameId uuid.UUID `url:"cpeNameId"`
     LastModified *rfc3339.DateTime `json:"lastModified"`
     Created *rfc3339.DateTime `json:"created"`
@@ -25,12 +25,12 @@ type Product struct {
     } `json:"refs"`
 
     DeprecatedBy []struct {
-      CpeName cpe.Match `json:"cpeName"`
+      CpeName cpe.Name `json:"cpeName"`
       CpeNameId uuid.UUID `url:"cpeNameId"`
     } `json:"deprecatedBy"`
 
     Deprecates []struct {
-      CpeName cpe.Match `json:"cpeName"`
+      CpeName cpe.Name `json:"cpeName"`
       CpeNameId uuid.UUID `url:"cpeNameId"`
     } `json:"deprecates"`
   } `json:"cpe"`
