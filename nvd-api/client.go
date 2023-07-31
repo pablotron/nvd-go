@@ -89,7 +89,30 @@ func (c Client) Cves(params CveParams) (*Response, error) {
   // send request, get response
   r, err := c.send("cves/2.0", queryString)
 
-  // TODO: check response format and version
+  // check response format
+  if r.Format != Cve {
+    return nil, fmt.Errorf("invalid response format: %s", r.Format)
+  }
+
+  // return response
+  return r, nil
+}
+
+// Search for CVE changes via NVD API.
+func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
+  // build query string from parameters
+  queryString, err := params.QueryString()
+  if err != nil {
+    return nil, fmt.Errorf("QueryString(): %w", err)
+  }
+
+  // send request, get response
+  r, err := c.send("cvehistory/2.0", queryString)
+
+  // check response format
+  if r.Format != CveHistory {
+    return nil, fmt.Errorf("invalid response format: %s", r.Format)
+  }
 
   // return response
   return r, nil
