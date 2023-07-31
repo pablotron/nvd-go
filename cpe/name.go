@@ -58,6 +58,16 @@ func (n Name) String() string {
   return "cpe:2.3:" + strings.Join([]string(n), ":")
 }
 
+// Unmarshal CPE name from text.
+func (n *Name) UnmarshalText(b []byte) error {
+  if nn, err := ParseName(string(b)); err == nil {
+    *n = *nn
+    return nil
+  } else {
+    return err
+  }
+}
+
 // Marshal CPE name as JSON string.
 func (n Name) MarshalJSON() ([]byte, error) {
   return json.Marshal(n.String())
