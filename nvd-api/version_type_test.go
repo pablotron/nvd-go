@@ -7,6 +7,7 @@ func TestVersionTypeString(t *testing.T) {
     val VersionType // test value
     exp string // expected string value
   } {
+    { DefaultVersionType, "" },
     { Including, "including" },
     { Excluding, "excluding" },
   }
