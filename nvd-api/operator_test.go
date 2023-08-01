@@ -44,6 +44,33 @@ func TestOperatorUnmarshalText(t *testing.T) {
   }
 }
 
+func TestOperatorMarshalText(t *testing.T) {
+  passTests := []struct {
+    name string // test name
+    val Operator // test operator
+    exp string // expected string
+  } {
+    { "And", And, "AND" },
+    { "Or", Or, "OR" },
+    { "InvalidOperator", InvalidOperator, "" },
+    { "Operator(255)", Operator(255), "" },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      gotBytes, err := test.val.MarshalText()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      got := string(gotBytes)
+      if got != test.exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, test.exp)
+      }
+    })
+  }
+}
+
 func TestOperatorString(t *testing.T) {
   passTests := []struct {
     name string // test name
