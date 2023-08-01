@@ -206,6 +206,28 @@ func TestMustParseMatch(t *testing.T) {
   }
 }
 
+func TestMatchRangedVersion(t *testing.T) {
+  tests := []struct {
+    val string // test string
+    exp bool // expected result
+  } {
+    { "cpe:2.3:a:cisco:ids_device_manager:3.1.1:*:*:*:*:*:*:*", false },
+    { "cpe:2.3:a:cisco:ids_device_manager:*:*:*:*:*:*:*:*", true },
+    { "cpe:2.3:a:apple:darwin_streaming_server:4.1.2:*:*:*:*:*:*:*", false },
+    { "cpe:2.3:a:apple:darwin_streaming_server:*:*:*:*:*:*:*:*", true },
+  }
+
+  for _, test := range(tests) {
+    t.Run(test.val, func(t *testing.T) {
+      m := MustParseMatch(test.val)
+      got := m.RangedVersion()
+      if got != test.exp {
+        t.Fatalf("got %t, exp %t", got, test.exp)
+      }
+    })
+  }
+}
+
 func TestMatchString(t *testing.T) {
   passTests := []string {
     "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
