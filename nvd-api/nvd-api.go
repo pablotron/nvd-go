@@ -7,14 +7,14 @@ import (
   "pmdn.org/nvd-go/rfc3339"
 )
 
-// Default NVD API URL.
+// Default NVD API URL.  Used by `NewClient()`.
 var DefaultUrl = net_url.URL {
   Scheme: "https",
   Host: "services.nvd.nist.gov",
   Path: "/rest/json",
 }
 
-// maximum number of days for date ranges
+// maximum number of days for date ranges.  Used by `checkDateRange`.
 const maxDateRangeDays = 120.0
 
 // Check for valid date range.  Used by CveParams.Check() and
