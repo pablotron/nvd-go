@@ -1,7 +1,6 @@
 package rfc3339
 
 import (
-  "encoding/json"
   "errors"
   "time"
 )
@@ -53,19 +52,12 @@ func (t *Time) String() string {
   }
 }
 
-func (t *Time) UnmarshalJSON(b []byte) error {
-  // unmarshal string
-  var s string
-  if err := json.Unmarshal(b, &s); err != nil {
+// Unmarshal time from text.
+func (t *Time) UnmarshalText(b []byte) error {
+  if nt, err := ParseTime(string(b)); err == nil {
+    *t = *nt
+    return nil
+  } else {
     return err
   }
-
-  // parse string
-  nt, err := ParseTime(s)
-  if err != nil {
-    return err
-  }
-
-  *t = *nt
-  return nil
 }
