@@ -56,13 +56,12 @@ func (m Match) String() string {
 
 // Unmarshal CPE match string from text.
 func (m *Match) UnmarshalText(b []byte) error {
-  nm, err := ParseMatch(string(b))
-  if err != nil {
+  if nm, err := ParseMatch(string(b)); err == nil {
+    *m = *nm
+    return nil
+  } else {
     return err
   }
-
-  *m = *nm
-  return nil
 }
 
 // Marshal CPE match string as JSON string.
