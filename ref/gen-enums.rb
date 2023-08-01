@@ -18,6 +18,8 @@ require 'digest/sha2'
 
 # templates
 T = {
+  enum_name: '%<type_acronym>s%<name>s',
+
   code: {
     main: %{
 // Enumerated string types.
@@ -32,8 +34,6 @@ const %<pack>s = `%<pack_data>s`
 
 %<enums>s
 },
-
-    enum_name: '%<type_acronym>s%<name>s',
 
     enum: %(
 // %<comment>s
@@ -276,6 +276,18 @@ def to_packed(enums)
   end
 end
 
+#
+# Convert value string to enumeration name.
+#
+def to_enum_name(type, val)
+  T[:enum_name] % {
+    type_acronym: type.acronym,
+    name: val.split('_').map { |s|
+      s.downcase.capitalize
+    }.join,
+  }
+end
+
 # get namespace from command-line args
 NS = ARGV.shift
 raise "Usage: #$0 <ns>" unless NS
@@ -313,14 +325,6 @@ File.write(DST_PATHS[:code], T[:code][:main] % {
     type = Type.new(id)
 
     vals = row['enum'].map { |val|
-      # build enumeration name
-      enum_name = T[:code][:enum_name] % {
-        type_acronym: type.acronym,
-        name: val.split('_').map { |s|
-          s.downcase.capitalize
-        }.join,
-      }
-
       {
         pack: pack,
         type: type.title,
@@ -328,7 +332,7 @@ File.write(DST_PATHS[:code], T[:code][:main] % {
         val: val,
         pack_lo: PACK_DATA.index(val),
         pack_hi: PACK_DATA.index(val) + val.size,
-        name: enum_name,
+        name: to_enum_name(type, val),
       }
     }
 
@@ -353,15 +357,7 @@ File.write(DST_PATHS[:test], T[:test][:main] % {
     type = Type.new(id)
 
     vals = row['enum'].map { |val|
-      # build enumeration name
-      enum_name = T[:code][:enum_name] % {
-        type_acronym: type.acronym,
-        name: val.split('_').map { |s|
-          s.downcase.capitalize
-        }.join,
-      }
-
-      { name: enum_name, val: val }
+      { name: to_enum_name(type, val), val: val }
     }
 
     T[:test][:enum] % {
