@@ -1,0 +1,44 @@
+package nvd_api
+
+import (
+  "pmdn.org/nvd-go/rfc3339"
+  "testing"
+)
+
+func TestCheckDateRange(t *testing.T) {
+  passTests := []struct {
+    name string // test name
+    startTime *rfc3339.Time // start time
+    endTime *rfc3339.Time // end time
+  } {
+    { "empty", nil, nil },
+    { "pair", rfc3339.MustParseTime("2023-01-02T12:34:56Z"), rfc3339.MustParseTime("2023-01-03T12:34:56Z") },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if err := checkDateRange(test.name, test.startTime, test.endTime); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    startTime *rfc3339.Time // start time
+    endTime *rfc3339.Time // end time
+  } {
+    { "missing end", rfc3339.MustParseTime("2023-01-02T12:34:56Z"), nil },
+    { "missing start", nil, rfc3339.MustParseTime("2023-01-02T12:34:56Z") },
+    { "negative", rfc3339.MustParseTime("2023-01-03T12:34:56Z"), rfc3339.MustParseTime("2023-01-02T12:34:56Z") },
+    { "max days", rfc3339.MustParseTime("2023-01-01T12:34:56Z"), rfc3339.MustParseTime("2023-06-01T12:34:56Z") },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if checkDateRange(test.name, test.startTime, test.endTime) == nil {
+        t.Fatal("got success, exp error")
+      }
+    })
+  }
+}
