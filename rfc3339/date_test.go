@@ -47,6 +47,22 @@ func TestParseDateComponent(t *testing.T) {
         }
       })
     }
+
+    failTests := []struct {
+      name string // test name
+      val string // test value
+    } {
+      { "empty", "" },
+      { "invalid", "asdf" },
+    }
+
+    for _, test := range(failTests) {
+      t.Run(fmt.Sprintf("%s/%s", name, test.name), func(t *testing.T) {
+        if got, err := parseDateComponent(name, test.val, minVal, maxVal); err == nil {
+          t.Fatalf("got %d, exp error", got)
+        }
+      })
+    }
   }
 
   testAll("year", "%04d", 0, 9999)
