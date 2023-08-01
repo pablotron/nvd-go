@@ -116,16 +116,10 @@ func (d Date) String() string {
   return fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
 }
 
-// Unmarshal JSON as date.
-func (d *Date) UnmarshalJSON(b []byte) error {
-  // unmarshal date as string
-  var s string
-  if err := json.Unmarshal(b, &s); err != nil {
-    return err
-  }
-
+// Unmarshal text as date.
+func (d *Date) UnmarshalText(b []byte) error {
   // parse string as date
-  nd, err := ParseDate(s)
+  nd, err := ParseDate(string(b))
   if err != nil {
     return err
   }
