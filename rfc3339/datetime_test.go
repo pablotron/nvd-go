@@ -1,6 +1,7 @@
 package rfc3339
 
 import (
+  "fmt"
   "testing"
   "time"
 )
@@ -51,6 +52,49 @@ func TestParseDateTime(t *testing.T) {
   }
 }
 
+func TestMustParseDateTime(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56.123",
+    "2023-01-02T12:34:56.321",
+    "2023-01-02T12:34:56.456",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse string
+      _ = MustParseDateTime(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "foobar" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse string
+      _ = MustParseDateTime(test.val)
+    })
+  }
+
+}
+
 func TestDateTimeString(t *testing.T) {
   passTests := []string {
     "2023-01-02T12:34:56.123",
@@ -68,6 +112,76 @@ func TestDateTimeString(t *testing.T) {
       got := dt.String()
       if got != exp {
         t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val *DateTime // test value
+  } {
+    { "nil", nil },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      exp := ""
+      got := test.val.String()
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+      }
+    })
+  }
+}
+
+func TestDateTimeUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56.123",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var got DateTime
+      if err := got.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "foobar" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got DateTime
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got \"%v\", exp error", got)
+      }
+    })
+  }
+}
+
+func TestDateTimeMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56.123",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      gotBytes, err := MustParseDateTime(test).MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
       }
     })
   }
