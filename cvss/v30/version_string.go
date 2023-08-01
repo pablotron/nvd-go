@@ -27,4 +27,3 @@ func (v *VersionString) MarshalText() ([]byte, error) {
 func (v VersionString) String() string {
   return versionStr
 }
-
