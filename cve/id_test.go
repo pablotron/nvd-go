@@ -35,7 +35,7 @@ func TestParseId(t *testing.T) {
     expNum: 1234,
   }, {
     name: "min num",
-    val: "CVE-2023-0",
+    val: "CVE-2023-0000",
     expString: "CVE-2023-0000",
     expYear: 2023,
     expNum: 0,
@@ -90,13 +90,13 @@ func TestParseId(t *testing.T) {
     val: "cve-2023-05",
   }, {
     name: "missing component",
-    val: "CVE-2023",
+    val: "CVE-2023-",
   }, {
     name: "low year",
-    val: "CVE-1899-0",
+    val: "CVE-1899-0000",
   }, {
     name: "high year",
-    val: "CVE-2156-0",
+    val: "CVE-2156-0000",
   }, {
     name: "high number",
     val: "CVE-2023-16777216",
