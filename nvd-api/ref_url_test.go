@@ -35,3 +35,65 @@ func TestParseRefUrl(t *testing.T) {
     })
   }
 }
+
+func TestRefUrlString(t *testing.T) {
+  passTests := []string {
+    "http://example.com/",
+    "https://example.com/",
+    "ftp://example.com/",
+    "ftps://example.com/",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      // parse url
+      url, err := ParseRefUrl(test)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      got := url.String()
+      exp := test
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+      }
+    })
+  }
+}
+
+
+func TestRefUrlUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "http://example.com/",
+    "https://example.com/",
+    "ftp://example.com/",
+    "ftps://example.com/",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var got RefUrl
+      if err := got.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "invalid scheme", "foo://example.com/" },
+    { "invalid host", "http://" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got RefUrl
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got \"%s\", exp error", got)
+      }
+    })
+  }
+}
