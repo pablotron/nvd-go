@@ -46,6 +46,48 @@ func TestParseSeverity(t *testing.T) {
   }
 }
 
+func TestMustParseSeverity(t *testing.T) {
+  passTests := []string {
+    "NONE",
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "CRITICAL",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      _ = MustParseSeverity(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "unknown", "foobar" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      _ = MustParseSeverity(test.val)
+    })
+  }
+}
+
 func TestSeverityString(t *testing.T) {
   passTests := []struct {
     name string // test name
@@ -66,6 +108,65 @@ func TestSeverityString(t *testing.T) {
       got := test.val.String()
       if got != test.exp {
         t.Fatalf("got \"%s\", exp \"%s\"", got, test.exp)
+      }
+    })
+  }
+}
+
+func TestSeverityUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "NONE",
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "CRITICAL",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var severity Severity
+      if err := severity.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []string {
+    "asdf",
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test, func(t *testing.T) {
+      var got Severity
+      if err := got.UnmarshalText([]byte(test)); err == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestSeverityMarshalText(t *testing.T) {
+  passTests := []struct {
+    val Severity // test value
+    exp string // expected string
+  } {
+    { None, "NONE" },
+    { Low, "LOW" },
+    { Medium, "MEDIUM" },
+    { High, "HIGH" },
+    { Critical, "CRITICAL" },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.exp, func(t *testing.T) {
+      gotBytes, err := test.val.MarshalText()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      got := string(gotBytes)
+      if got != test.exp {
+        t.Fatalf("got %s, exp %s", got, test.exp)
       }
     })
   }
