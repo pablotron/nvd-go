@@ -6,6 +6,54 @@ import (
   "testing"
 )
 
+func TestParseDateComponent(t *testing.T) {
+  // test all possible component values
+  testAll := func(name, format string, minVal, maxVal uint64) {
+    // test valid values
+    for exp := minVal; exp < maxVal + 1; exp++ {
+      // build test string
+      test := fmt.Sprintf(format, exp)
+
+      t.Run(fmt.Sprintf("%s/%s", name, test), func(t *testing.T) {
+        // parse component
+        got, err := parseDateComponent(name, test, minVal, maxVal)
+        if err != nil {
+          t.Fatal(err)
+        }
+
+        // check against expected value
+        if uint64(got) != uint64(exp) {
+          t.Fatalf("got %d, exp %d", got, exp)
+        }
+      })
+    }
+
+    if minVal > 0 {
+      // test underflow
+      test := fmt.Sprintf(format, minVal - 1)
+      t.Run(fmt.Sprintf("%s/%s", name, test), func(t *testing.T) {
+        if got, err := parseDateComponent(name, test, minVal, maxVal); err == nil {
+          t.Fatalf("got %d, exp error", got)
+        }
+      })
+    }
+
+    {
+      // test overflow
+      test := fmt.Sprintf(format, maxVal + 1)
+      t.Run(fmt.Sprintf("%s/%s", name, test), func(t *testing.T) {
+        if got, err := parseDateComponent(name, test, minVal, maxVal); err == nil {
+          t.Fatalf("got %d, exp error", got)
+        }
+      })
+    }
+  }
+
+  testAll("year", "%04d", 0, 9999)
+  testAll("month", "%02d", 1, 12)
+  testAll("day", "%02d", 1, 21)
+}
+
 func TestCheckMonthDays(t *testing.T) {
   passTests := []struct {
     month, day uint32
