@@ -290,6 +290,70 @@ func TestParseVector(t *testing.T) {
   }
 }
 
+func TestMustParseVector(t *testing.T) {
+  passTests := []string {
+    // generated with testdata/get-vectors.rb
+    "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+    "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:N/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      _ = MustParseVector(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "invalid metric",
+    val: "foo:bar",
+  }, {
+    name: "duplicate metric",
+    val: "AV:N/AV:A",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      _ = MustParseVector(test.val)
+    })
+  }
+}
+
 func TestVectorString(t *testing.T) {
   tests := []string {
     "AV:N/AC:L/Au:N/C:C/I:C/A:C",

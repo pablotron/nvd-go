@@ -476,6 +476,62 @@ func TestParseVector(t *testing.T) {
   }
 }
 
+func TestMustParseVector(t *testing.T) {
+  passTests := []string {
+    // generated with testdata/get-vectors.rb
+    "CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:L",
+    "CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+    "CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      _ = MustParseVector(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "wrong version",
+    val: "CVSS:3.1/AV:N",
+  }, {
+    name: "invalid metric",
+    val: "CVSS:3.0/foo",
+  }, {
+    name: "duplicate metric",
+    val: "CVSS:3.0/AV:N/AV:A",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      _ = MustParseVector(test.val)
+    })
+  }
+}
+
 func TestVectorString(t *testing.T) {
   tests := []string {
     "CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:L",
