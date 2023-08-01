@@ -353,3 +353,40 @@ func TestMatchString(t *testing.T) {
     })
   }
 }
+
+func TestMatchUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var m Match
+      if err := m.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "missing cpe prefix", "cpe:2.3" },
+    { "missing cpe version", "cpe:" },
+    { "invalid cpe prefix", "foo:2.3:*" },
+    { "invalid cpe version", "cpe:3.2:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var m Match
+      if err := m.UnmarshalText([]byte(test.val)); err == nil {
+        t.Fatalf("got \"%s\", exp error", m)
+      }
+    })
+  }
+}
