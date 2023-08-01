@@ -1,6 +1,9 @@
 package cve
 
-import "testing"
+import (
+  "fmt"
+  "testing"
+)
 
 func TestParseId(t *testing.T) {
   passTests := []struct {
@@ -72,6 +75,34 @@ func TestParseId(t *testing.T) {
         t.Fatalf("string mismatch: got %s, exp %s", gotString, test.expString)
       }
     })
+
+    t.Run("nil", func(t *testing.T) {
+      id := (*Id)(nil)
+
+      t.Run("String", func(t *testing.T) {
+        got := id.String()
+        exp := ""
+        if got != exp {
+          t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+        }
+      })
+
+      t.Run("Year", func(t *testing.T) {
+        got := id.Year()
+        exp := uint32(0)
+        if got != exp {
+          t.Fatalf("got %d, exp %d", got, exp)
+        }
+      })
+
+      t.Run("Num", func(t *testing.T) {
+        got := id.Num()
+        exp := uint32(0)
+        if got != exp {
+          t.Fatalf("got %d, exp %d", got, exp)
+        }
+      })
+    })
   }
 
   failTests := []struct {
@@ -106,6 +137,133 @@ func TestParseId(t *testing.T) {
     t.Run(test.name, func(t *testing.T) {
       if got, err := ParseId(test.val); err == nil {
         t.Fatalf("got %v, exp err", got)
+      }
+    })
+  }
+}
+
+func TestMustParseId(t *testing.T) {
+  passTests := []string {
+    "CVE-2023-1234",
+    "CVE-2023-0013",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse CVE ID
+      _ = MustParseId(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {{
+    name: "empty",
+  }, {
+    name: "garbage",
+    val: "foo",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse CVE ID
+      _ = MustParseId(test.val)
+    })
+  }
+}
+
+func TestIdUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "CVE-2023-1234",
+    "CVE-2023-0013",
+    "CVE-1900-1234",
+    "CVE-2155-1234",
+    "CVE-2023-0000",
+    "CVE-2023-16777215",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var id Id
+      if err := id.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {{
+    name: "empty",
+  }, {
+    name: "garbage",
+    val: "foo",
+  }, {
+    name: "invalid prefix",
+    val: "abc-2023-05",
+  }, {
+    name: "wrong prefix case",
+    val: "cve-2023-05",
+  }, {
+    name: "missing component",
+    val: "CVE-2023-",
+  }, {
+    name: "low year",
+    val: "CVE-1899-0000",
+  }, {
+    name: "high year",
+    val: "CVE-2156-0000",
+  }, {
+    name: "high number",
+    val: "CVE-2023-16777216",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got Id
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got \"%s\", exp error", got.String())
+      }
+    })
+  }
+}
+
+func TestIdMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "CVE-2023-1234",
+    "CVE-2023-0013",
+    "CVE-1900-1234",
+    "CVE-2155-1234",
+    "CVE-2023-0000",
+    "CVE-2023-16777215",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      id := MustParseId(test)
+      gotBytes, err := id.MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
       }
     })
   }
