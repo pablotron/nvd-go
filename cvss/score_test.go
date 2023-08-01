@@ -135,10 +135,19 @@ func TestScoreUnmarshalJSON(t *testing.T) {
   }
 
   // fail tests
-  failTests := []float64 { -10.0, -0.1, 10.1, 100.0 }
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "-10.0", "-10.0", },
+    { "-0.1", "-0.1" },
+    { "10.1", "10.1" },
+  }
+
   for _, test := range(failTests) {
-    t.Run(strconv.FormatFloat(test, 'f', 2, 64), func(t *testing.T) {
-      b := []byte(fmt.Sprintf("%f", test))
+    t.Run(test.name, func(t *testing.T) {
+      b := []byte(test.val)
 
       var got Score
       if got.UnmarshalJSON(b) == nil {
