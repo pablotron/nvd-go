@@ -47,6 +47,9 @@ func TestParseId(t *testing.T) {
     name: "missing prefix",
     val: "1234",
   }, {
+    name: "long garbage",
+    val: "aslkdjfalksjfalkdsfjalkdsfjlkds",
+  }, {
     name: "non-numeric",
     val: "CWE-asdf",
   }, {
