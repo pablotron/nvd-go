@@ -9,6 +9,89 @@ import (
   "testing"
 )
 
+func TestCveParamsCheck(t *testing.T) {
+  failTests := []struct {
+    name string // test name
+    val CveParams // test value
+  } {{
+    name: "v2 metrics and v3 metrics combo",
+    val: CveParams {
+      CvssV2Metrics: "asdf",
+      CvssV3Metrics: "asdf",
+    },
+  }, {
+    name: "v2 severity and v3 severity combo",
+    val: CveParams {
+      CvssV2Severity: cvss.Low,
+      CvssV3Severity: cvss.Low,
+    },
+  }, {
+    name: "invalid v2 severity",
+    val: CveParams {
+      CvssV2Severity: cvss.Critical,
+    },
+  }, {
+    name: "invalid v3 severity",
+    val: CveParams {
+      CvssV3Severity: cvss.Severity(255),
+    },
+  }, {
+    name: "huge resultsPerPage",
+    val: CveParams {
+      ResultsPerPage: 50000,
+    },
+  }, {
+    name: "isVulnerable and virtualMatchString",
+    val: CveParams {
+      IsVulnerable: true,
+      VirtualMatchString: cpe.MustParseMatch("cpe:2.3:foo"),
+    },
+  }, {
+    name: "keywordExactMatch w/o keywordSearch",
+    val: CveParams {
+      KeywordExactMatch: true,
+    },
+  }, {
+    name: "lastModStartDate w/o lastModEndDate",
+    val: CveParams {
+      LastModStartDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
+    },
+  }, {
+    name: "pubStartDate w/o pubEndDate",
+    val: CveParams {
+      PubStartDate: rfc3339.MustParseTime("2023-12-01T12:34:56Z"),
+    },
+  }, {
+    name: "versionEnd w/o versionEndType",
+    val: CveParams {
+      VersionEnd: "asdf",
+    },
+  }, {
+    name: "versionEndType w/o versionEnd",
+    val: CveParams {
+      VersionEndType: Including,
+    },
+  }, {
+    name: "versionStart w/o versionStartType",
+    val: CveParams {
+      VersionStart: "asdf",
+    },
+  }, {
+    name: "versionStartType w/o versionStart",
+    val: CveParams {
+      VersionStartType: Including,
+    },
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if test.val.Check() == nil {
+        t.Fatal("got success, exp error")
+      }
+    })
+  }
+}
+
 func TestCveParamsQueryString(t *testing.T) {
   passTests := []struct {
     name  string // test name
