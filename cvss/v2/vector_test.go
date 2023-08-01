@@ -1,6 +1,7 @@
 package v2
 
 import (
+  "fmt"
   "pmdn.org/nvd-go/cvss"
   "reflect"
   "testing"
@@ -448,6 +449,99 @@ func TestValidVectorString(t *testing.T) {
       exp := false
       if got != exp {
         t.Fatalf("got %t, exp %t", got, exp)
+      }
+    })
+  }
+}
+
+func TestVectorUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+    "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:N/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var v Vector
+      if err := v.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "invalid metric",
+    val: "foo:bar",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got Vector
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestVectorMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+    "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:N/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      v := MustParseVector(test)
+      gotBytes, err := v.MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
       }
     })
   }
