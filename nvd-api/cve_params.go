@@ -96,7 +96,7 @@ func (cp CveParams) Check() error {
     return errCveParamsInvalidMetricsPair
   }
 
-  // check for invalid v2 and v3 metrics combination
+  // check for invalid v2 and v3 severity combination
   if cp.CvssV2Severity != cvss.Unknown && cp.CvssV3Severity != cvss.Unknown {
     return errCveParamsInvalidSeverityPair
   }
