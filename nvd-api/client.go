@@ -43,15 +43,8 @@ func (c Client) send(endpoint string, params QueryStringer, format Format) (*Res
     return nil, fmt.Errorf("QueryString(): %w", err)
   }
 
-  // build full URL path
-  path, err := net_url.JoinPath(c.apiUrl.Path, endpoint)
-  if err != nil {
-    return nil, fmt.Errorf("JoinPath(): %w", err)
-  }
-
-  // build request url
-  url := *c.apiUrl
-  url.Path = path
+  // build new URL from API URL with endpoint path and query string
+  url := c.apiUrl.JoinPath(endpoint)
   url.RawQuery = query
 
   // create request
