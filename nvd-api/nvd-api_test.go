@@ -8,8 +8,7 @@ import (
 func TestCheckDateRange(t *testing.T) {
   passTests := []struct {
     name string // test name
-    startTime *rfc3339.Time // start time
-    endTime *rfc3339.Time // end time
+    start, end *rfc3339.Time // start and end time
   } {
     { "empty", nil, nil },
     { "pair", rfc3339.MustParseTime("2023-01-02T12:34:56Z"), rfc3339.MustParseTime("2023-01-03T12:34:56Z") },
@@ -17,7 +16,7 @@ func TestCheckDateRange(t *testing.T) {
 
   for _, test := range(passTests) {
     t.Run(test.name, func(t *testing.T) {
-      if err := checkDateRange(test.name, test.startTime, test.endTime); err != nil {
+      if err := checkDateRange(test.name, test.start, test.end); err != nil {
         t.Fatal(err)
       }
     })
@@ -25,8 +24,7 @@ func TestCheckDateRange(t *testing.T) {
 
   failTests := []struct {
     name string // test name
-    startTime *rfc3339.Time // start time
-    endTime *rfc3339.Time // end time
+    start, end *rfc3339.Time // start and end time
   } {
     { "missing end", rfc3339.MustParseTime("2023-01-02T12:34:56Z"), nil },
     { "missing start", nil, rfc3339.MustParseTime("2023-01-02T12:34:56Z") },
@@ -36,7 +34,7 @@ func TestCheckDateRange(t *testing.T) {
 
   for _, test := range(failTests) {
     t.Run(test.name, func(t *testing.T) {
-      if checkDateRange(test.name, test.startTime, test.endTime) == nil {
+      if checkDateRange(test.name, test.start, test.end) == nil {
         t.Fatal("got success, exp error")
       }
     })
