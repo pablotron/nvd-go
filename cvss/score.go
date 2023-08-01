@@ -3,6 +3,7 @@ package cvss
 import (
   "encoding/json"
   "fmt"
+  "strconv"
 )
 
 // Individual CVSS score.
@@ -92,7 +93,7 @@ func (s *Score) UnmarshalJSON(b []byte) error {
   return nil
 }
 
-// Marshal score as JSON.
-func (s Score) MarshalJSON() ([]byte, error) {
-  return json.Marshal(s.Float())
+// Marshal score as text.
+func (s Score) MarshalText() ([]byte, error) {
+  return []byte(strconv.FormatFloat(float64(s.Float()), 'f', 1, 64)), nil
 }
