@@ -5,6 +5,13 @@ import (
   "testing"
 )
 
+// func shouldPanic(t *testing.T, fn func()) {
+//   t.Helper()
+//   defer func() { _ = recover() }()
+//   fn()
+//   t.Fatal("expected panic")
+// }
+
 func TestParseMatch(t *testing.T) {
   passTests := []struct {
     val string // test value
@@ -129,6 +136,72 @@ func TestParseMatch(t *testing.T) {
       if !reflect.DeepEqual(got, test.exp) {
         t.Fatalf("got %v, exp %v", got, test.exp)
       }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "missing cpe prefix", "cpe:2.3" },
+    { "missing cpe version", "cpe:" },
+    { "invalid cpe prefix", "foo:2.3:*" },
+    { "invalid cpe version", "cpe:3.2:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if got, err := ParseMatch(test.val); err == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestMustParseMatch(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse match string
+      _ = MustParseMatch(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "missing cpe prefix", "cpe:2.3" },
+    { "missing cpe version", "cpe:" },
+    { "invalid cpe prefix", "foo:2.3:*" },
+    { "invalid cpe version", "cpe:3.2:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse value
+      _ = MustParseMatch(test.val)
     })
   }
 }
