@@ -1,6 +1,7 @@
 package cpe
 
 import (
+  "fmt"
   "reflect"
   "testing"
 )
@@ -386,6 +387,27 @@ func TestMatchUnmarshalText(t *testing.T) {
       var m Match
       if err := m.UnmarshalText([]byte(test.val)); err == nil {
         t.Fatalf("got \"%s\", exp error", m)
+      }
+    })
+  }
+}
+
+func TestMatchMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      gotBytes, err := MustParseMatch(test).MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
       }
     })
   }
