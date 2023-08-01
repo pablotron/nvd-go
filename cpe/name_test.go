@@ -1,6 +1,7 @@
 package cpe
 
 import (
+  "fmt"
   "reflect"
   "testing"
 )
@@ -131,6 +132,71 @@ func TestParseName(t *testing.T) {
       }
     })
   }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "invalid cpe prefix", "foo:2.3:*:*:*:*:*:*:*:*:*:*:*" },
+    { "invalid cpe version", "cpe:3.2:*:*:*:*:*:*:*:*:*:*:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+    { "too many wildcard", "cpe:2.3:a:b:c:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      if got, err := ParseName(test.val); err == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestMustParseName(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse name string
+      _ = MustParseName(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "missing cpe prefix", "cpe:2.3" },
+    { "missing cpe version", "cpe:" },
+    { "invalid cpe prefix", "foo:2.3:*" },
+    { "invalid cpe version", "cpe:3.2:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse value
+      _ = MustParseName(test.val)
+    })
+  }
 }
 
 func TestNameString(t *testing.T) {
@@ -254,6 +320,64 @@ func TestNameString(t *testing.T) {
       exp := test
       if got != exp {
         t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+}
+
+func TestNameUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var name Name
+      if err := name.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "missing cpe prefix", "cpe:2.3" },
+    { "missing cpe version", "cpe:" },
+    { "invalid cpe prefix", "foo:2.3:*" },
+    { "invalid cpe version", "cpe:3.2:*" },
+    { "short component count", "cpe:2.3" },
+    { "long component count", "cpe:2.3:*:*:*:*:*:*:*:*:*:*:*:*" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got Name
+      if err := got.UnmarshalText([]byte(test.val)); err == nil {
+        t.Fatalf("got \"%s\", exp error", got)
+      }
+    })
+  }
+}
+
+func TestNameMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "cpe:2.3:o:microsoft:windows:10:*:*:*:*:*:*:*",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      gotBytes, err := MustParseName(test).MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
       }
     })
   }
