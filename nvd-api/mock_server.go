@@ -11,7 +11,9 @@ import (
   "os"
 )
 
-// Mock NVD API HTTP server.  Used for Client unit tests.
+// Mock NVD API HTTP server.
+//
+// Used for Client unit tests in `TestClient()`.
 type MockServer struct {
   Url *net_url.URL // server URL
   s *httptest.Server // server
@@ -43,11 +45,6 @@ func (ms MockServer) Close() {
   ms.s.Close()
 }
 
-// Is the given key is a valid API key, and false otherwise.
-func (ms MockServer) validApiKey(key string) bool {
-  return ms.apiKey == key
-}
-
 // map of mock routes to mock responses
 var mockRoutes = map[string]string {
   "/cves/2.0": "cves-2023.json.gz",
@@ -57,6 +54,7 @@ var mockRoutes = map[string]string {
   "/source/2.0": "sources-20.json.gz",
 }
 
+// Send compressed JSON file as response.
 func sendJson(w http.ResponseWriter, name string) error {
   // open source file
   f, err := os.Open(fmt.Sprintf("testdata/responses/%s", name))
@@ -100,7 +98,7 @@ func (ms MockServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
   }
 
   // check request apiKey header
-  if !ms.validApiKey(r.Header.Get("apiKey")) {
+  if r.Header.Get("apiKey") != ms.apiKey {
     // FIXME: check this w/ live server
     http.Error(w, "", http.StatusUnauthorized)
     return
