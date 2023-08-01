@@ -3,6 +3,8 @@ package cve
 import (
   "encoding/json"
   "fmt"
+  "regexp"
+  "strconv"
 )
 
 // CVE identifier (ID).
@@ -22,22 +24,31 @@ var idComponents = [2]struct {
   { name: "number", min: 0, max: (1 << 24) - 1 },
 }
 
+// CVE ID regular expression
+var idRe = regexp.MustCompile(`^CVE-(\d{4})-(\d{4,8})$`)
+
 // Minimum CVE ID year
 var minIdYear = uint32(idComponents[0].min)
 
 // Parse CVE identifier from string.  Returns error if the given
 // string could not be parsed as a CVE identifier.
 func ParseId(s string) (*Id, error) {
-  // parse string
   var ns [2]uint32
-  if n, err := fmt.Sscanf(s, "CVE-%04d-%d", &ns[0], &ns[1]); err != nil {
-    return nil, err
-  } else if n != 2 {
-    return nil, fmt.Errorf("invalid component count: %d != 2", n)
+  md := idRe.FindStringSubmatch(s)
+  if md == nil {
+    return nil, fmt.Errorf("invalid CVE ID string: \"%s\"", s)
   }
 
-  // check component ranges
+  // parse year and number
   for i, c := range(idComponents) {
+    // parse uint64
+    u64, err := strconv.ParseUint(md[i + 1], 10, 32)
+    if err != nil {
+      return nil, err
+    }
+
+    // convert to u32, check range
+    ns[i] = uint32(u64)
     if ns[i] < c.min || ns[i] > c.max {
       return nil, fmt.Errorf("%s out of range: %d != [%d, %d]", c.name, ns[i], c.min, c.max)
     }
