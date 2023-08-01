@@ -132,4 +132,21 @@ func TestSourceParamsQueryString(t *testing.T) {
       }
     })
   }
+
+  failTests := []struct {
+    name string // test name
+    val SourceParams // test value
+  } {
+    { "invalid", SourceParams { ResultsPerPage: 50000 } },
+  }
+
+  // run fail tests
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      // get query string
+      if got, err := test.val.QueryString(); err == nil {
+        t.Fatalf("got %s, exp error", got)
+      }
+    })
+  }
 }
