@@ -42,6 +42,36 @@ func TestFormatUnmarshalText(t *testing.T) {
   }
 }
 
+func TestFormatMarshalText(t *testing.T) {
+  passTests := []struct {
+    name string // test name
+    val Format // test value
+    exp string // expected string
+  } {
+    { "Cve", FormatCve, "NVD_CVE" },
+    { "CveHistory", FormatCveHistory, "NVD_CVEHistory" },
+    { "Cpe", FormatCpe, "NVD_CPE" },
+    { "CpeMatch", FormatCpeMatch, "NVD_CPEMatchString" },
+    { "Source", FormatSource, "NVD_SOURCE" },
+    { "UnknownFormat", FormatUnknown, "" },
+    { "Format(255)", Format(255), "" },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      gotBytes, err := test.val.MarshalText()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      got := string(gotBytes)
+      if got != test.exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, test.exp)
+      }
+    })
+  }
+}
+
 func TestFormatString(t *testing.T) {
   passTests := []struct {
     name string // test name
