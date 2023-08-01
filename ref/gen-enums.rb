@@ -5,7 +5,7 @@
 # gen-enums.rb: generate enum code for given JSON schema.
 #
 # Example:
-#   ./gen-enums.rb cvss31 < cvss-v3.1.json > cvss31/cvss31.go
+#   ./gen-enums.rb v2 < cvss-v2.0.json > v2/enums.go
 #
 # TODO: should be rewritten to work with `go generate`.
 #
@@ -24,19 +24,6 @@ package %<ns>s
 
 import "fmt"
 
-// Invalid type string error
-type InvalidTypeString struct {
-  Type, Value string
-}
-
-func newInvalidTypeString(typeName, value string) *InvalidTypeString {
-  return &InvalidTypeString { typeName, value }
-}
-
-func (t InvalidTypeString) Error() string {
-  return fmt.Sprintf("invalid %%s: \\"%%s\\"", t.Type, t.Value)
-}
-
 // packed string of enumeration values
 const %<pack>s = `%<pack_data>s`
 
@@ -53,14 +40,6 @@ const (
   Invalid%<type>s %<type>s = iota%<consts>s
 )
 
-// Parse %<type>s from string.
-func Parse%<type>s(s string) (%<type>s, error) {
-  switch s {%<parse_cases>s
-  default:
-    return Invalid%<type>s, newInvalidTypeString("%<type>s", s)
-  }
-}
-
 // Convert %<type>s to string.
 func (v %<type>s) String() string {
   switch v {%<string_cases>s
@@ -74,7 +53,7 @@ func (v *%<type>s) UnmarshalText(text []byte) error {
   s := string(text)
   switch string(text) {%<unmarshal_cases>s
   default:
-    return newInvalidTypeString("%<type>s", s)
+    return fmt.Errorf("invalid %<type>s: \\"%%s\\"", s)
   }
 }
 
