@@ -67,3 +67,59 @@ func TestNewScores(t *testing.T) {
     })
   }
 }
+
+func TestMustParseScores(t *testing.T) {
+  fp := func(v float64) *float64 { return &v } // float ptr
+
+  passTests := []struct {
+    name  string // test name
+    base  float64 // base score
+    temp  *float64 // temporal score
+    env   *float64 // env score
+  } {
+    { "base-min", 0, nil, nil },
+    { "base-max", 10, nil, nil },
+    { "temp-min", 5, fp(0), nil },
+    { "temp-max", 5, fp(10), nil },
+    { "env-min", 5, fp(6.7), fp(0) },
+    { "env-max", 5, fp(6.7), fp(10) },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse scores
+      _ = MustParseScores(test.base, test.temp, test.env)
+    })
+  }
+
+  // fail tests
+  failTests := []struct {
+    name    string // test name
+    base    float64 // base score
+    temp    *float64 // temporal score
+    env     *float64 // env score
+  } {
+    { "invalid base", 10.1, nil, nil },
+    { "invalid temporal", 5.0, fp(10.1), nil },
+    { "invalid env", 5.0, fp(6.7), fp(10.1) },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse scores
+      _ = MustParseScores(test.base, test.temp, test.env)
+    })
+  }
+}
