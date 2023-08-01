@@ -194,3 +194,129 @@ func TestParseDate(t *testing.T) {
     })
   }
 }
+
+func TestMustParseDate(t *testing.T) {
+  passTests := []string {
+    "2023-01-12",
+    "1923-12-31",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse date
+      _ = MustParseDate(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {{
+    name: "not iso8601",
+    val: "asdf",
+  }, {
+    name: "zero month",
+    val: "1234-00-01",
+  }, {
+    name: "high month",
+    val: "1234-13-01",
+  }, {
+    name: "zero day",
+    val: "1234-01-00",
+  }, {
+    name: "high day",
+    val: "1234-01-32",
+  }, {
+    name: "invalid month day",
+    val: "1234-02-31",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse date
+      _ = MustParseDate(test.val)
+    })
+  }
+}
+
+func TestDateUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "2023-01-12",
+    "1923-12-31",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var got Date
+      if err := got.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {{
+    name: "not iso8601",
+    val: "asdf",
+  }, {
+    name: "zero month",
+    val: "1234-00-01",
+  }, {
+    name: "high month",
+    val: "1234-13-01",
+  }, {
+    name: "zero day",
+    val: "1234-01-00",
+  }, {
+    name: "high day",
+    val: "1234-01-32",
+  }, {
+    name: "invalid month day",
+    val: "1234-02-31",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got Date
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestDateMarshalJSON(t *testing.T) {
+  passTests := []string {
+    "2023-01-12",
+    "1923-12-31",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      gotBytes, err := MustParseDate(test).MarshalJSON()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      exp := fmt.Sprintf("\"%s\"", test)
+      got := string(gotBytes)
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+      }
+    })
+  }
+}
