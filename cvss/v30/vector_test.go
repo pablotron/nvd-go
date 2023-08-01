@@ -1,6 +1,7 @@
 package v30
 
 import (
+  "pmdn.org/nvd-go/cvss"
   "reflect"
   "testing"
 )
@@ -622,6 +623,63 @@ func TestVectorString(t *testing.T) {
       got := MustParseVector(exp).String()
       if got != exp {
         t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+}
+
+func TestVectorVersion(t *testing.T) {
+  var vec Vector
+  got := vec.Version()
+  exp := cvss.V30
+  if got != exp {
+    t.Fatalf("got %v, exp %v", got, exp)
+  }
+}
+
+func TestValidVectorString(t *testing.T) {
+  passTests := []string {
+    "CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:L",
+    "CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L",
+    "CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+    "CVSS:3.0/AV:A/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      got := ValidVectorString(test)
+      exp := true
+      if got != exp {
+        t.Fatalf("got %t, exp %t", got, exp)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "wrong version",
+    val: "CVSS:3.1/AV:N",
+  }, {
+    name: "invalid metric",
+    val: "CVSS:3.0/foo",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      got := ValidVectorString(test.val)
+      exp := false
+      if got != exp {
+        t.Fatalf("got %t, exp %t", got, exp)
       }
     })
   }

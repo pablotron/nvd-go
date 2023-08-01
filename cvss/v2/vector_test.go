@@ -1,6 +1,7 @@
 package v2
 
 import (
+  "pmdn.org/nvd-go/cvss"
   "reflect"
   "testing"
 )
@@ -382,6 +383,71 @@ func TestVectorString(t *testing.T) {
       got := MustParseVector(exp).String()
       if got != exp {
         t.Fatalf("got %s, exp %s", got, exp)
+      }
+    })
+  }
+}
+
+func TestVectorVersion(t *testing.T) {
+  var vec Vector
+  got := vec.Version()
+  exp := cvss.V2
+  if got != exp {
+    t.Fatalf("got %v, exp %v", got, exp)
+  }
+}
+
+func TestValidVectorString(t *testing.T) {
+  passTests := []string {
+    "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:P",
+    "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:N/AC:H/Au:N/C:C/I:C/A:C",
+    "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+    "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+    "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+    "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+    "AV:N/AC:L/Au:N/C:P/I:P/A:N",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      got := ValidVectorString(test)
+      exp := true
+      if got != exp {
+        t.Fatalf("got %t, exp %t", got, exp)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test vector string
+  } {{
+    name: "empty",
+  }, {
+    name: "invalid prefix",
+    val: "foo/AV:N",
+  }, {
+    name: "invalid metric",
+    val: "foo:bar",
+  }}
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      got := ValidVectorString(test.val)
+      exp := false
+      if got != exp {
+        t.Fatalf("got %t, exp %t", got, exp)
       }
     })
   }
