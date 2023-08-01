@@ -5,7 +5,7 @@ import (
   "testing"
 )
 
-func TestNewClientWithUrl(t *testing.T) {
+func TestClient(t *testing.T) {
   // generate random api key
   apiKey, err := uuid.NewRandom()
   if err != nil {
