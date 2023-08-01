@@ -49,4 +49,114 @@ func TestParseTime(t *testing.T) {
       }
     })
   }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "sdlkfjaslkdfj" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name ,func(t *testing.T) {
+      if got, err := ParseTime(test.val); err == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
+}
+
+func TestMustParseTime(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56Z",
+    "2023-01-02T12:34:56+01:00",
+    "2023-01-02T12:34:56-01:00",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      defer func() {
+        if err := recover(); err != nil {
+          t.Fatal(err)
+        }
+      }()
+
+      // parse string
+      _ = MustParseTime(test)
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "sdlkfjaslkdfj" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name ,func(t *testing.T) {
+      defer func() {
+        if recover() == nil {
+          t.Fatal("got success, exp error")
+        }
+      }()
+
+      // parse string
+      _ = MustParseTime(test.val)
+    })
+  }
+}
+
+func TestTimeString(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56Z",
+    "2023-01-02T12:34:56+01:00",
+    "2023-01-02T12:34:56-01:00",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      got := MustParseTime(test).String()
+      exp := test
+      if got != exp {
+        t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+      }
+    })
+  }
+}
+
+func TestTimeUnmarshalText(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56Z",
+    "2023-01-02T12:34:56+01:00",
+    "2023-01-02T12:34:56-01:00",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      var got Time
+      if err := got.UnmarshalText([]byte(test)); err != nil {
+        t.Fatal(err)
+      }
+    })
+  }
+
+  failTests := []struct {
+    name string // test name
+    val string // test value
+  } {
+    { "empty", "" },
+    { "garbage", "sdlkfjaldskfj" },
+  }
+
+  for _, test := range(failTests) {
+    t.Run(test.name, func(t *testing.T) {
+      var got Time
+      if got.UnmarshalText([]byte(test.val)) == nil {
+        t.Fatalf("got %v, exp error", got)
+      }
+    })
+  }
 }
