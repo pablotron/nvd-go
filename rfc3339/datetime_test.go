@@ -132,6 +132,14 @@ func TestDateTimeString(t *testing.T) {
       }
     })
   }
+
+  t.Run("nil", func(t *testing.T) {
+    exp := ""
+    got := ((*DateTime)(nil)).String()
+    if got != exp {
+      t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+    }
+  })
 }
 
 func TestDateTimeUnmarshalText(t *testing.T) {
@@ -185,4 +193,39 @@ func TestDateTimeMarshalJSON(t *testing.T) {
       }
     })
   }
+}
+
+func TestDateTimeTime(t *testing.T) {
+  passTests := []struct {
+    val string // test value
+    exp string // expected time
+  } {
+    { "2023-01-02T12:34:56.000", "2023-01-02T12:34:56.000Z" },
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test.val, func(t *testing.T) {
+      // parse datetime
+      got, err := MustParseDateTime(test.val).Time()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      // parse expected time
+      exp, err := time.Parse(time.RFC3339, test.exp)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      if !got.Equal(exp) {
+        t.Fatalf("got %v, exp %v", got, exp)
+      }
+    })
+  }
+
+  t.Run("nil", func(t *testing.T) {
+    if got, err := ((*DateTime)(nil)).Time(); err == nil {
+      t.Fatalf("got %v, exp error", got)
+    }
+  })
 }
