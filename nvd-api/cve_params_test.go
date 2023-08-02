@@ -41,9 +41,15 @@ func TestCveParamsCheck(t *testing.T) {
       ResultsPerPage: 50000,
     },
   }, {
+    name: "isVulnerable w/o cpeName",
+    val: CveParams {
+      IsVulnerable: true,
+    },
+  }, {
     name: "isVulnerable and virtualMatchString",
     val: CveParams {
       IsVulnerable: true,
+      CpeName: cpe.MustParseName("cpe:2.3:a:b:c:d:e:f:g:h:i:j:k"),
       VirtualMatchString: cpe.MustParseMatch("cpe:2.3:foo"),
     },
   }, {
