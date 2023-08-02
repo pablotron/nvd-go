@@ -109,6 +109,41 @@ func TestMustParseTime(t *testing.T) {
   }
 }
 
+func TestTimeTime(t *testing.T) {
+  passTests := []string {
+    "2023-01-02T12:34:56Z",
+    "2023-01-02T12:34:56+01:00",
+    "2023-01-02T12:34:56-01:00",
+  }
+
+  for _, test := range(passTests) {
+    t.Run(test, func(t *testing.T) {
+      // parse time
+      got, err := MustParseTime(test).Time()
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      // get expected time
+      exp, err := time.Parse(time.RFC3339, test)
+      if err != nil {
+        t.Fatal(err)
+      }
+
+      if !got.Equal(exp) {
+        t.Fatalf("got \"%v\", exp \"%v\"", got, exp)
+      }
+    })
+  }
+
+  // test nil time
+  t.Run("nil", func(t *testing.T) {
+    if got, err := (*Time)(nil).Time(); err == nil {
+      t.Fatalf("got \"%v\", exp err", got)
+    }
+  })
+}
+
 func TestTimeString(t *testing.T) {
   passTests := []string {
     "2023-01-02T12:34:56Z",
@@ -125,6 +160,15 @@ func TestTimeString(t *testing.T) {
       }
     })
   }
+
+  // test nil time
+  t.Run("nil", func(t *testing.T) {
+    got := (*Time)(nil).String()
+    exp := ""
+    if got != exp {
+      t.Fatalf("got \"%s\", exp \"%s\"", got, exp)
+    }
+  })
 }
 
 func TestTimeUnmarshalText(t *testing.T) {
