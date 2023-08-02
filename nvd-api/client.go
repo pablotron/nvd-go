@@ -1,6 +1,7 @@
 package nvd_api
 
 import (
+  "context"
   "encoding/json"
   "fmt"
   "net/http"
@@ -36,7 +37,7 @@ func NewClient(apiKey string) Client {
 }
 
 // Send API request.
-func (c Client) send(endpoint string, params QueryStringer, format Format) (*Response, error) {
+func (c Client) send(ctx context.Context, endpoint string, params QueryStringer, format Format) (*Response, error) {
   // build query string from parameters
   query, err := params.QueryString()
   if err != nil {
@@ -48,7 +49,7 @@ func (c Client) send(endpoint string, params QueryStringer, format Format) (*Res
   url.RawQuery = query
 
   // create request
-  req, err := http.NewRequest("GET", url.String(), nil)
+  req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
   if err != nil {
     return nil, fmt.Errorf("NewRequest(): %w", err)
   }
@@ -83,31 +84,31 @@ func (c Client) send(endpoint string, params QueryStringer, format Format) (*Res
 }
 
 // Search for CVEs via NVD API.
-func (c Client) Cves(params CveParams) (*Response, error) {
+func (c Client) Cves(ctx context.Context, params CveParams) (*Response, error) {
   // send request, return response
-  return c.send("cves/2.0", &params, FormatCve)
+  return c.send(ctx, "cves/2.0", &params, FormatCve)
 }
 
 // Search for CVE changes via NVD API.
-func (c Client) CveHistory(params CveHistoryParams) (*Response, error) {
+func (c Client) CveHistory(ctx context.Context, params CveHistoryParams) (*Response, error) {
   // send request, return response
-  return c.send("cvehistory/2.0", &params, FormatCveHistory)
+  return c.send(ctx, "cvehistory/2.0", &params, FormatCveHistory)
 }
 
 // Search for CPEs via NVD API.
-func (c Client) Cpes(params CpeParams) (*Response, error) {
+func (c Client) Cpes(ctx context.Context, params CpeParams) (*Response, error) {
   // send request, return response
-  return c.send("cpes/2.0", &params, FormatCpe)
+  return c.send(ctx, "cpes/2.0", &params, FormatCpe)
 }
 
 // Search for CPE matches via NVD API.
-func (c Client) CpeMatches(params CpeMatchParams) (*Response, error) {
+func (c Client) CpeMatches(ctx context.Context, params CpeMatchParams) (*Response, error) {
   // send request, return response
-  return c.send("cpematch/2.0", &params, FormatCpeMatch)
+  return c.send(ctx, "cpematch/2.0", &params, FormatCpeMatch)
 }
 
 // Search for sources via NVD API.
-func (c Client) Sources(params SourceParams) (*Response, error) {
+func (c Client) Sources(ctx context.Context, params SourceParams) (*Response, error) {
   // send request, return response
-  return c.send("source/2.0", &params, FormatSource)
+  return c.send(ctx, "source/2.0", &params, FormatSource)
 }

@@ -1,11 +1,14 @@
 package nvd_api
 
 import (
+  "context"
   "github.com/google/uuid"
   "testing"
 )
 
 func TestClient(t *testing.T) {
+  ctx := context.Background()
+
   // generate random api key
   apiKey, err := uuid.NewRandom()
   if err != nil {
@@ -23,7 +26,25 @@ func TestClient(t *testing.T) {
   t.Run("invalid key", func(t *testing.T) {
     // create client with valid api key
     client := NewClientWithUrl("unknown key", s.Url)
-    if _, err := client.Cves(CveParams{}); err == nil {
+    if _, err := client.Cves(ctx, CveParams{}); err == nil {
+      t.Fatal("got success, exp error")
+    }
+  })
+
+  t.Run("user agent", func(t *testing.T) {
+    // create client with valid api key and user agent
+    client := NewClientWithUrl(apiKey.String(), s.Url)
+    client.UserAgent = "foobar"
+    if _, err := client.Cves(ctx, CveParams{}); err != nil {
+      t.Fatal(err)
+    }
+  })
+
+  t.Run("invalid query string", func(t *testing.T) {
+    // create client with valid api key and user agent
+    client := NewClientWithUrl(apiKey.String(), s.Url)
+    client.UserAgent = "foobar"
+    if _, err := client.Cves(ctx, CveParams { ResultsPerPage: 50000 }); err == nil {
       t.Fatal("got success, exp error")
     }
   })
@@ -34,31 +55,31 @@ func TestClient(t *testing.T) {
     client := NewClientWithUrl(apiKey.String(), s.Url)
 
     t.Run("Cves", func(t *testing.T) {
-      if _, err := client.Cves(CveParams{}); err != nil {
+      if _, err := client.Cves(ctx, CveParams{}); err != nil {
         t.Fatal(err)
       }
     })
 
     t.Run("CveHistory", func(t *testing.T) {
-      if _, err := client.CveHistory(CveHistoryParams{}); err != nil {
+      if _, err := client.CveHistory(ctx, CveHistoryParams{}); err != nil {
         t.Fatal(err)
       }
     })
 
     t.Run("Cpes", func(t *testing.T) {
-      if _, err := client.Cpes(CpeParams{}); err != nil {
+      if _, err := client.Cpes(ctx, CpeParams{}); err != nil {
         t.Fatal(err)
       }
     })
 
     t.Run("CpeMatches", func(t *testing.T) {
-      if _, err := client.CpeMatches(CpeMatchParams{}); err != nil {
+      if _, err := client.CpeMatches(ctx, CpeMatchParams{}); err != nil {
         t.Fatal(err)
       }
     })
 
     t.Run("Sources", func(t *testing.T) {
-      if _, err := client.Sources(SourceParams{}); err != nil {
+      if _, err := client.Sources(ctx, SourceParams{}); err != nil {
         t.Fatal(err)
       }
     })
