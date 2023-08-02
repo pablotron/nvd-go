@@ -3,6 +3,7 @@ package nvd_api
 import (
   "context"
   "github.com/google/uuid"
+  "pmdn.org/nvd-go/mock-server"
   "testing"
 )
 
@@ -16,7 +17,7 @@ func TestClient(t *testing.T) {
   }
 
   // create mock server
-  s, err := NewMockServer(apiKey.String())
+  s, err := mock_server.New(apiKey.String())
   if err != nil {
     t.Fatal(err)
   }
