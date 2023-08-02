@@ -57,4 +57,20 @@ func TestSendJson(t *testing.T) {
       }
     })
   })
+
+  t.Run("non-gzipped file", func(t *testing.T) {
+    rr := httptest.NewRecorder()
+    if sendJson(rr, "not-gzipped.txt") == nil {
+      t.Fatal("got success, exp error")
+    }
+
+    // check response code
+    t.Run("code", func(t *testing.T) {
+      got := rr.Code
+      exp := 500
+      if got != exp {
+        t.Fatalf("got %d, exp %d", got, exp)
+      }
+    })
+  })
 }
