@@ -11,12 +11,25 @@ type Stringable struct {
 
 func (s Stringable) String() string { return s.s }
 
+// Custom type that does not implement String().  Used to test Encode().
+type NotStringable struct {
+  s string // string value
+}
+
 // type which implements all url-taggable types.  Used to test Encode().
 type Tagged struct {
   Bool bool `url:"bool"`
   Uint uint `url:"uint"`
   String string `url:"string"`
   Stringable Stringable `url:"stringable"`
+  private string `url:"private"` // test private field
+  Untagged string // test untagged field
+}
+
+// type which has a url-tagged field which has an unstringable type.
+// Used by `TestEncode()`.
+type BadTagged struct {
+  NotStringable NotStringable `url:"notStringable"`
 }
 
 func TestEncode(t *testing.T) {
@@ -63,4 +76,11 @@ func TestEncode(t *testing.T) {
       }
     })
   }
+
+  t.Run("fail", func(t *testing.T) {
+    val := BadTagged { NotStringable { "asdf" } }
+    if got, err := Encode(&val); err == nil {
+      t.Fatalf("got \"%s\", exp error", got)
+    }
+  })
 }
