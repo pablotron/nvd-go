@@ -1,28 +1,51 @@
-package nvd_api
+package mock_server
 
 import (
-  "compress/gzip"
-  "fmt"
-  "io"
   "log"
   "net/http"
   "net/http/httptest"
   net_url "net/url"
-  "os"
 )
 
 // Mock NVD API HTTP server.
 //
 // Used for Client unit tests in `TestClient()`.
-type MockServer struct {
+type Server struct {
   Url *net_url.URL // server URL
   s *httptest.Server // server
   apiKey string // api key
+  routes map[string]Route
 }
 
-// Create new mock server.
-func NewMockServer(apiKey string) (*MockServer, error) {
-  var r MockServer
+// route function
+type Route func(w http.ResponseWriter, r *http.Request) error
+
+// default routes (serve up mock responses)
+var DefaultRoutes = map[string]Route {
+  "/cves/2.0": func(w http.ResponseWriter, r *http.Request) error {
+    return sendJson(w, "cves-2023.json.gz")
+  },
+
+  "/cvehistory/2.0": func(w http.ResponseWriter, r *http.Request) error {
+    return sendJson(w, "cvehistory-CVE-2019-1010218.json.gz")
+  },
+
+  "/cpes/2.0": func(w http.ResponseWriter, r *http.Request) error {
+    return sendJson(w, "cpes-2023.json.gz")
+  },
+
+  "/cpematch/2.0": func(w http.ResponseWriter, r *http.Request) error {
+    return sendJson(w, "cpematch-CVE-2022-32223.json.gz")
+  },
+
+  "/source/2.0": func(w http.ResponseWriter, r *http.Request) error {
+    return sendJson(w, "sources-20.json.gz")
+  },
+}
+
+// Create new mock server with routes.
+func NewWithRoutes(apiKey string, routes map[string]Route) (*Server, error) {
+  var r Server
 
   // start server
   r.s = httptest.NewServer(&r)
@@ -33,57 +56,26 @@ func NewMockServer(apiKey string) (*MockServer, error) {
     return nil, err
   }
 
-  // cache api key and url
+  // cache api key, routes, and url
   r.apiKey = apiKey
+  r.routes = routes
   r.Url = url
 
   return &r, nil
 }
 
+// Create new mock server with default routes.
+func New(apiKey string) (*Server, error) {
+  return NewWithRoutes(apiKey, DefaultRoutes)
+}
+
 // shut down server
-func (ms MockServer) Close() {
+func (ms Server) Close() {
   ms.s.Close()
 }
 
-// map of mock routes to mock responses
-var mockRoutes = map[string]string {
-  "/cves/2.0": "cves-2023.json.gz",
-  "/cvehistory/2.0": "cvehistory-CVE-2019-1010218.json.gz",
-  "/cpes/2.0": "cpes-2023.json.gz",
-  "/cpematch/2.0": "cpematch-CVE-2022-32223.json.gz",
-  "/source/2.0": "sources-20.json.gz",
-}
-
-// Send compressed JSON file as response.
-func sendJson(w http.ResponseWriter, name string) error {
-  // open source file
-  f, err := os.Open(fmt.Sprintf("testdata/responses/%s", name))
-  if err != nil {
-    http.Error(w, "", http.StatusInternalServerError)
-    return err
-  }
-  defer f.Close()
-
-  // create gzip reader
-  gz, err := gzip.NewReader(f)
-  if err != nil {
-    http.Error(w, "", http.StatusInternalServerError)
-    return err
-  }
-  defer gz.Close()
-
-  // set header, copy content
-  w.Header().Add("Content-Type", "application/json")
-  if _, err := io.Copy(w, gz); err != nil {
-    return err
-  }
-
-  // return success
-  return nil
-}
-
 // HTTP handler.
-func (ms MockServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ms Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
   // check request method
   if r.Method != "GET" {
     http.Error(w, "", http.StatusMethodNotAllowed)
@@ -104,16 +96,16 @@ func (ms MockServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  // get response file name
-  name, ok := mockRoutes[r.URL.Path]
+  // get route
+  route, ok := ms.routes[r.URL.Path]
   if !ok {
     // FIXME: check this w/ live server
     http.Error(w, "", http.StatusNotFound)
     return
   }
 
-  // send json
-  if err := sendJson(w, name); err != nil {
+  // call route
+  if err := route(w, r); err != nil {
     log.Print(err)
     return
   }
