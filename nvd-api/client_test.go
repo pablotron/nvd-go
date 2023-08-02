@@ -40,6 +40,17 @@ func TestClient(t *testing.T) {
     }
   })
 
+  t.Run("nil context", func(t *testing.T) {
+    // create client with valid api key
+    client := NewClientWithUrl(apiKey.String(), s.Url)
+
+    // call Cves() with nil context
+    // (http.NewRequest() will error out when given a nil context)
+    if _, err := client.Cves(nil, CveParams{}); err == nil {
+      t.Fatal("got success, exp error")
+    }
+  })
+
   t.Run("invalid query string", func(t *testing.T) {
     // create client with valid api key and user agent
     client := NewClientWithUrl(apiKey.String(), s.Url)
