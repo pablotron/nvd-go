@@ -9,7 +9,8 @@ import (
 )
 
 
-// Send compressed JSON file as response.
+// Send compressed JSON file as response.  Used by default mock server
+// routes.
 func sendJson(w http.ResponseWriter, name string) error {
   // open source file
   f, err := os.Open(fmt.Sprintf("testdata/responses/%s", name))
