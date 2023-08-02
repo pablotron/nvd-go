@@ -107,6 +107,7 @@ func TestMetricTypeString(t *testing.T) {
     val MetricType // test value
   } {
     { "invalid", InvalidMetricType },
+    { "garbage", MetricType(255) },
   }
 
   for _, test := range(failTests) {
