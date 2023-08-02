@@ -60,7 +60,7 @@ func (ms Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
   // check request Accept header
   if r.Header.Get("Accept") != "application/json" {
     // FIXME: check this w/ live server
-    http.Error(w, "", http.StatusMethodNotAllowed)
+    http.Error(w, "", http.StatusNotAcceptable)
     return
   }
 
