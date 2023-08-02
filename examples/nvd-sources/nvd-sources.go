@@ -13,6 +13,7 @@
 package main
 
 import (
+  "context"
   "encoding/json"
   "log"
   "os"
@@ -30,6 +31,8 @@ func appName() string {
 }
 
 func main() {
+  ctx := context.Background()
+
   // default parameters for Sources()
   var sourceParams nvd_api.SourceParams
 
@@ -40,7 +43,7 @@ func main() {
   client := nvd_api.NewClient(apiKey)
 
   // get sources
-  r, err := client.Sources(sourceParams)
+  r, err := client.Sources(ctx, sourceParams)
   if err != nil {
     log.Fatal(err)
   }
