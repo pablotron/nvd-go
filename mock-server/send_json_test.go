@@ -42,35 +42,28 @@ func TestSendJson(t *testing.T) {
     })
   }
 
-  t.Run("missing file", func(t *testing.T) {
-    rr := httptest.NewRecorder()
-    if sendJson(rr, "does-not-exist.txt") == nil {
-      t.Fatal("got success, exp error")
-    }
+  failTests := []string {
+    "does-not-exist.txt",
+    "not-gzipped.txt",
+  }
 
-    // check response code
-    t.Run("code", func(t *testing.T) {
-      got := rr.Code
-      exp := 500
-      if got != exp {
-        t.Fatalf("got %d, exp %d", got, exp)
+  // run fail tests
+  for _, test := range(failTests) {
+    t.Run(test, func(t *testing.T) {
+      // send json, record response
+      rr := httptest.NewRecorder()
+      if sendJson(rr, test) == nil {
+        t.Fatal("got success, exp error")
       }
-    })
-  })
 
-  t.Run("non-gzipped file", func(t *testing.T) {
-    rr := httptest.NewRecorder()
-    if sendJson(rr, "not-gzipped.txt") == nil {
-      t.Fatal("got success, exp error")
-    }
-
-    // check response code
-    t.Run("code", func(t *testing.T) {
-      got := rr.Code
-      exp := 500
-      if got != exp {
-        t.Fatalf("got %d, exp %d", got, exp)
-      }
+      // check response code
+      t.Run("code", func(t *testing.T) {
+        got := rr.Code
+        exp := 500
+        if got != exp {
+          t.Fatalf("got %d, exp %d", got, exp)
+        }
+      })
     })
-  })
+  }
 }
