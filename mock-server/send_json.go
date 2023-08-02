@@ -37,4 +37,3 @@ func sendJson(w http.ResponseWriter, name string) error {
   // return success
   return nil
 }
-
