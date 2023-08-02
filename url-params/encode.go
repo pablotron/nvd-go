@@ -53,7 +53,7 @@ func Encode[T any](valPtr *T) (string, error) {
     default:
       // get String() method
       fn := fieldVal.MethodByName("String")
-      if fn.IsZero() {
+      if !fn.IsValid() {
         return "", fmt.Errorf("field %s cannot be converted to string", field.Name)
       }
 
