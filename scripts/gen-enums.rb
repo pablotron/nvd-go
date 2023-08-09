@@ -7,7 +7,7 @@
 #
 # Example:
 #   # regenerate cvss/v2/enums{,_test}.go from ref/cvss-v2.0.json
-#   ./gen-enums.rb v2 < cvss-v2.0.json
+#   ./gen-enums.rb v2
 #
 # TODO: should be rewritten to work with `go generate`.
 #
@@ -16,8 +16,10 @@
 require 'json'
 require 'digest/sha2'
 
-# map of known cvss version to json schema
-CVSS_VERSIONS = {
+# CVSS version ID to JSON schema map.
+#
+# Used to map first command-line argument to source JSON schema file.
+JSON_SCHEMAS = {
   v2: 'cvss-v2.0.json',
   v30: 'cvss-v3.0.json',
   v31: 'cvss-v3.1.json',
@@ -297,7 +299,7 @@ end
 
 # get namespace from command-line args
 NS = ARGV.shift
-raise "Usage: #$0 <ns>" unless NS
+raise "Usage: #$0 <ns>" unless NS && JSON_SCHEMAS.key?(NS.intern)
 
 # build path to destination directory and destination paths
 DST_PATHS = {
@@ -305,8 +307,8 @@ DST_PATHS = {
   test: File.join(__dir__, '..', 'cvss', NS, 'enums_test.go'),
 }
 
-# read data from stdin
-DATA = STDIN.read
+# build path to json schema for given namespace, then read json schema file
+DATA = File.read(File.join(__dir__, '..', 'ref', JSON_SCHEMAS[NS.intern]))
 
 # read enums from schema definitions
 enums = JSON(DATA)['definitions'].select { |id, row|
