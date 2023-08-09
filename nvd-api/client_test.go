@@ -41,12 +41,14 @@ func TestClient(t *testing.T) {
     }
   })
 
+  //nolint:staticcheck // allow nil context for test (golangci-lint)
   t.Run("nil context", func(t *testing.T) {
     // create client with valid api key
     client := NewClientWithUrl(apiKey.String(), s.Url)
 
     // call Cves() with nil context
     // (http.NewRequest() will error out when given a nil context)
+    //lint:ignore SA1012 allow nil context for test (staticcheck)
     if _, err := client.Cves(nil, CveParams{}); err == nil {
       t.Fatal("got success, exp error")
     }
