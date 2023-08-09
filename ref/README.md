@@ -1,12 +1,7 @@
 # Reference Data
 
-Use the `gen-enums.rb` script to generate a [Go][] package from the
-given [JSON Schema][] file.
-
-Example:
-
-    # generate cvss31/cvss31.go from 
-    ./gen-enums.rb cvss31 < cvss-v3.1.json > cvss31/cvss31.go
+Reference [JSON schema][] data from [NVD API documentation][].  Used by
+scripts in top-level `scripts/` directory to generate code and tests.
 
 ## Endpoints
 
@@ -42,5 +37,7 @@ NVD API endpoints and documentation.
 
 [go]: https://go.dev/
   "Go programming language."
+[nvd api documentation]: https://nvd.nist.gov/developers/
+  "NVD API documentation."
 [json schema]: https://json-schema.org/
   "JSON schema."
