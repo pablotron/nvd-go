@@ -16,6 +16,13 @@
 require 'json'
 require 'digest/sha2'
 
+# map of known cvss version to json schema
+CVSS_VERSIONS = {
+  v2: 'cvss-v2.0.json',
+  v30: 'cvss-v3.0.json',
+  v31: 'cvss-v3.1.json',
+}
+
 # templates
 T = {
   enum_name: '%<type_acronym>s%<name>s',
