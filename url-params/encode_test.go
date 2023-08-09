@@ -62,6 +62,10 @@ func TestEncode(t *testing.T) {
     name: "stringable",
     val: &Tagged { Stringable: Stringable { "hi" } },
     exp: "stringable=hi",
+  }, {
+    name: "private",
+    val: &Tagged { private: "asdf" },
+    exp: "",
   }}
 
   for _, test := range(passTests) {
