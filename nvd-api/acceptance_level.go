@@ -1,6 +1,6 @@
 package nvd_api
 
-import "pmdn.org/nvd-go/rfc3339"
+import "pablotron.org/nvd-go/rfc3339"
 
 // Source acceptance level.
 type AcceptanceLevel struct {

@@ -3,7 +3,7 @@ package nvd_api
 import (
   "context"
   "github.com/google/uuid"
-  "pmdn.org/nvd-go/mock-server"
+  "pablotron.org/nvd-go/mock-server"
   "testing"
 )
 

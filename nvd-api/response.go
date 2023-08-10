@@ -1,7 +1,7 @@
 package nvd_api
 
 import (
-  "pmdn.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/rfc3339"
 )
 
 // NVD API response.

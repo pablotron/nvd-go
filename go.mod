@@ -1,4 +1,4 @@
-module pmdn.org/nvd-go
+module pablotron.org/nvd-go
 
 go 1.20
 

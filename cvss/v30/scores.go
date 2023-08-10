@@ -2,7 +2,7 @@ package v30
 
 import (
   "math"
-  "pmdn.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss"
 )
 
 // metric coefficients

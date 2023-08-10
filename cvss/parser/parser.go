@@ -3,10 +3,10 @@ package parser
 
 import (
   "fmt"
-  "pmdn.org/nvd-go/cvss"
-  "pmdn.org/nvd-go/cvss/v2"
-  "pmdn.org/nvd-go/cvss/v30"
-  "pmdn.org/nvd-go/cvss/v31"
+  "pablotron.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss/v2"
+  "pablotron.org/nvd-go/cvss/v30"
+  "pablotron.org/nvd-go/cvss/v31"
 )
 
 // Parse vector string into v2.0, v3.0, or v3.1 CVSS vector.

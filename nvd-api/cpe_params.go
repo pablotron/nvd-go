@@ -4,9 +4,9 @@ import (
   "errors"
   "fmt"
   "github.com/google/uuid"
-  "pmdn.org/nvd-go/cpe"
-  "pmdn.org/nvd-go/rfc3339"
-  "pmdn.org/nvd-go/url-params"
+  "pablotron.org/nvd-go/cpe"
+  "pablotron.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/url-params"
 )
 
 // Search parameters for `Cpes()` method.

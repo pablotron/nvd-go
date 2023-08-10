@@ -1,7 +1,7 @@
 package v2
 
 import (
-  "pmdn.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss"
   "reflect"
   "testing"
 )

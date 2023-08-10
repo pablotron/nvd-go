@@ -4,7 +4,7 @@ package nvd_api
 import (
   "fmt"
   net_url "net/url"
-  "pmdn.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/rfc3339"
 )
 
 // Default NVD API URL.  Used by `NewClient()`.

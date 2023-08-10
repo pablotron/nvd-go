@@ -8,7 +8,7 @@ package v2
 import (
   "encoding/json"
   "fmt"
-  "pmdn.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss"
   "regexp"
   "strings"
 

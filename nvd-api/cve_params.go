@@ -3,12 +3,12 @@ package nvd_api
 import (
   "errors"
   "fmt"
-  "pmdn.org/nvd-go/cpe"
-  "pmdn.org/nvd-go/cve"
-  "pmdn.org/nvd-go/cvss"
-  "pmdn.org/nvd-go/cwe"
-  "pmdn.org/nvd-go/rfc3339"
-  "pmdn.org/nvd-go/url-params"
+  "pablotron.org/nvd-go/cpe"
+  "pablotron.org/nvd-go/cve"
+  "pablotron.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cwe"
+  "pablotron.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/url-params"
 )
 
 // Search parameters for `Cves()` method.

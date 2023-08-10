@@ -2,9 +2,9 @@ package nvd_api
 
 import (
   "github.com/google/uuid"
-  "pmdn.org/nvd-go/cpe"
-  "pmdn.org/nvd-go/cve"
-  "pmdn.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/cpe"
+  "pablotron.org/nvd-go/cve"
+  "pablotron.org/nvd-go/rfc3339"
   "testing"
 )
 

@@ -2,7 +2,7 @@ package v2
 
 import (
   "fmt"
-  "pmdn.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss"
   "reflect"
   "testing"
 )

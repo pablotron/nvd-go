@@ -2,9 +2,9 @@ package nvd_api
 
 import (
   "fmt"
-  "pmdn.org/nvd-go/cve"
-  "pmdn.org/nvd-go/rfc3339"
-  "pmdn.org/nvd-go/url-params"
+  "pablotron.org/nvd-go/cve"
+  "pablotron.org/nvd-go/rfc3339"
+  "pablotron.org/nvd-go/url-params"
 )
 
 // Search parameters for `CveHistory()` method.

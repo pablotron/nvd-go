@@ -19,7 +19,7 @@ import (
   "encoding/csv"
   "log"
   "os"
-  "pmdn.org/nvd-go/cvss/parser"
+  "pablotron.org/nvd-go/cvss/parser"
 )
 
 // Convert vector string to CSV row.

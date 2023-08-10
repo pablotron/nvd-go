@@ -2,7 +2,7 @@ package v2
 
 import (
   "math"
-  "pmdn.org/nvd-go/cvss"
+  "pablotron.org/nvd-go/cvss"
 )
 
 // Return pointer to float64 if the value is non-zero, or nil otherwise.

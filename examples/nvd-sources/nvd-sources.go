@@ -17,7 +17,7 @@ import (
   "encoding/json"
   "log"
   "os"
-  "pmdn.org/nvd-go/nvd-api"
+  "pablotron.org/nvd-go/nvd-api"
 )
 
 // Get application name from command-line arguments, or return
