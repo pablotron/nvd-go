@@ -2,9 +2,9 @@
 "use strict";
 
 //
-// random-vectors.js: Generate 1000 random CVSS v3.1 vector strings,
-// calculate their metric scores (base, temporal, and environmental)
-// using the script from the NIST NVD calculator, then write the
+// random-vectors.js: Generate 1000 random CVSS v3.0 or v3.1 vector strings
+// and their base, temporal, and environmental metric scores as
+// calculated by the script from the NVD CVSS calculator, then write the
 // results to standard output as a JSON array.
 //
 // Each row of the JSON array contains 4 elements:
@@ -15,8 +15,20 @@
 // - environmental score
 //
 
-// load cvss 3.1 calculator
-const CVSS31 = require('./cvsscalc31.js').CVSS31;
+const VERSIONS = {
+  v30: require('./cvsscalc30.js').CVSS,
+  v31: require('./cvsscalc31.js').CVSS31,
+};
+
+// check command-line
+if (process.argv.length != 3 || Object.keys(VERSIONS).indexOf(process.argv[2]) === -1) {
+  // print usage, exit with error
+  process.stderr.write(`Usage: ${process.argv[0]} [${Object.keys(VERSIONS).join('|')}]`);
+  process.exit(-1);
+}
+
+// load calculator
+const CVSS = VERSIONS[process.argv[2]];
 
 // number of vectors to generate
 const NUM_VECTORS = 1000;
@@ -54,7 +66,7 @@ const random_vector = (() => {
 
   // metric template
   const T = ({id,cs}) => `${id}:${pick(cs.split(''))}`;
-  return () => ('CVSS:3.1/' + METRICS.map(T).join('/'));
+  return () => (CVSS.CVSSVersionIdentifier + '/' + METRICS.map(T).join('/'));
 })();
 
 // create an array of N random vector strings
@@ -76,5 +88,5 @@ const to_row = (() => {
 // generate random vectors, calculate their scores, extract relevant
 // columns, JSON-encode them, write the results to standard output
 process.stdout.write(JSON.stringify(random_vectors(NUM_VECTORS).map(
-  v => to_row(CVSS31.calculateCVSSFromVector(v))
+  v => to_row(CVSS.calculateCVSSFromVector(v))
 )));
